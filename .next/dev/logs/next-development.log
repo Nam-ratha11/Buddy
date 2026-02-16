@@ -1,0 +1,77 @@
+[00:00:00.478] Server  LOG     ✓ Ready in 348ms
+[00:00:07.248] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:58.922] Browser LOG     Files selected: [{}]
+[00:02:29.494] Server  LOG     ✓ Compiled in 5ms
+[00:02:38.302] Server  LOG     ✓ Compiled in 3ms
+[00:02:38.957] Browser ERROR   uncaughtError: TypeError: onGeneratePractice is not a function
+[00:02:40.093] Browser ERROR   uncaughtError: TypeError: onGeneratePractice is not a function
+[00:02:40.286] Server  LOG     ✓ Compiled in 4ms
+[00:02:54.772] Server  LOG     ✓ Compiled in 11ms
+[00:03:57.603] Browser LOG     Files selected: [{}]
+[00:05:45.390] Server  LOG     ✓ Compiled in 13ms
+[00:05:47.396] Server  LOG     ✓ Compiled in 5ms
+[00:05:49.399] Server  LOG     ✓ Compiled in 2ms
+[00:05:51.413] Server  LOG     ✓ Compiled in 6ms
+[00:06:36.785] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:06:42.913] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:06:47.626] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:01.626] Browser LOG     Files selected: [{}]
+[00:09:57.138] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:08.529] Browser LOG     Files selected: [{}]
+[00:11:00.712] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:14:22.291] Server  LOG     ✓ Compiled in 4ms
+[00:14:33.305] Server  LOG     ✓ Compiled in 3ms
+[00:15:35.649] Server  LOG     ✓ Compiled in 6ms
+[00:15:37.641] Server  LOG     ✓ Compiled in 3ms
+[00:20:11.364] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:12.065] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:12.465] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:12.623] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:13.311] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:13.459] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:31.717] Browser LOG     Files selected: [{}]
+[00:21:03.540] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:26:14.601] Server  LOG     ✓ Compiled in 5ms
+[00:26:27.551] Server  LOG     ✓ Compiled in 8ms
+[00:26:27.608] Browser ERROR   uncaughtError: ReferenceError: files is not defined
+[00:26:34.226] Server  LOG       Reload env: .env.local
+[00:26:34.317] Server  ERROR   ⨯ ReferenceError: files is not defined
+[00:26:34.376] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:26:34.484] Browser ERROR   uncaughtError: ReferenceError: files is not defined
+[00:29:08.987] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:08.988] Server  ERROR   ⨯ "unhandledRejection:" Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:08.991] Server  ERROR   ⨯ "unhandledRejection: " Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.012] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.014] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.016] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.017] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.019] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.020] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.029] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.031] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.037] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.038] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.039] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.042] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.051] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.051] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.054] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:29:09.055] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:10.764] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:10.765] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:30.976] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:30.977] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:46.316] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:31:46.317] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:07.626] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:07.627] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:20.917] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:20.918] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:33.804] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:33.806] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:34.262] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:34.264] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:34.413] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:34.415] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:40.248] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
+[00:32:40.249] Server  ERROR   Error: ENOENT: no such file or directory, scandir '/Users/namratha/Desktop/sprout/app'
