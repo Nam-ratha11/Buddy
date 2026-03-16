@@ -50,7 +50,9 @@ function MermaidDiagram({ chart }) {
             style={{
                 padding: '1.5rem', borderRadius: '12px',
                 background: 'white', border: '1px solid var(--border)',
-                display: 'flex', justifyContent: 'center', overflow: 'auto'
+                display: 'flex', justifyContent: 'center', overflow: 'auto',
+                marginTop: '1rem',
+                marginBottom: '1rem'
             }}
             dangerouslySetInnerHTML={{ __html: svg }}
         />
@@ -59,15 +61,13 @@ function MermaidDiagram({ chart }) {
 
 export default function RemediationAgent({ evaluation, history = [], studentClass, syllabusTopics }) {
     const [gapProgress, setGapProgress] = useState({});
-    const [activeSubject, setActiveSubject] = useState(null);
-    const [remediationData, setRemediationData] = useState(null);
-    const [loadingTopic, setLoadingTopic] = useState(null);
-    const [mcqAnswer, setMcqAnswer] = useState(null);
-    const [mcqSubmitted, setMcqSubmitted] = useState(false);
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [drawerTopic, setDrawerTopic] = useState(null);
-    const drawerRef = useRef(null);
+    const [messages, setMessages] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
+    
+    // Track states of MCQs inside chat
+    const [mcqAnswers, setMcqAnswers] = useState({}); // { messageId: selectedOptionIndex }
 
+    const scrollRef = useRef(null);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
     // Per-user localStorage key for gap progress
@@ -92,7 +92,14 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
         localStorage.setItem(getStorageKey(), JSON.stringify(updated));
     };
 
-    // Aggregate all evaluated questions
+    // Auto-scroll to bottom on new messages
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [messages, isTyping]);
+
+    // Aggregate all evaluated questions to find weak topics
     let allQuestions = [];
     if (evaluation && evaluation.questions) {
         allQuestions = evaluation.questions;
@@ -103,7 +110,6 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
         }, []);
     }
 
-    // Build topic scores
     const topicScores = {};
     allQuestions.forEach(q => {
         if (!topicScores[q.topic]) {
@@ -117,61 +123,116 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
         }
     });
 
-    // Build chapter-wise view
-    const subjectChapters = {};
-    if (syllabusTopics) {
-        Object.entries(syllabusTopics).forEach(([subject, topics]) => {
-            subjectChapters[subject] = topics.map(topic => {
-                const score = topicScores[topic];
-                let status = 'not_tested';
-                if (score) {
-                    const pct = (score.obtained / score.total) * 100;
-                    status = pct >= 75 ? 'strong' : 'weak';
-                }
-                const savedStatus = gapProgress[topic];
-                // If score is weak, always show as weak so "Fix this Gap" remains available
-                // Only override with in_progress (actively studying)
-                if (savedStatus === 'in_progress' && status === 'weak') status = 'in_progress';
-                return {
-                    topic, status,
-                    percentage: score ? Math.round((score.obtained / score.total) * 100) : null,
-                    mistakeType: score?.mistakeType,
-                    feedback: score?.feedback
-                };
+    const buildWeakTopics = () => {
+        let weak = [];
+        if (syllabusTopics) {
+            Object.entries(syllabusTopics).forEach(([subject, topics]) => {
+                topics.forEach(topic => {
+                    const score = topicScores[topic];
+                    if (score) {
+                        const pct = (score.obtained / score.total) * 100;
+                        if (pct < 75) {
+                            weak.push({
+                                topic, 
+                                subject,
+                                mistakeType: score.mistakeType,
+                                feedback: score.feedback,
+                                status: gapProgress[topic] || 'weak'
+                            });
+                        }
+                    }
+                });
             });
+        }
+        return weak;
+    };
+
+    const weakTopics = buildWeakTopics();
+
+    // Initialize Chat
+    useEffect(() => {
+        if (weakTopics.length > 0 && messages.length === 0) {
+            const unresolvedTopics = weakTopics.filter(t => t.status !== 'resolved');
+            
+            if (unresolvedTopics.length > 0) {
+                setMessages([
+                    {
+                        id: Date.now().toString(),
+                        role: 'bot',
+                        type: 'text',
+                        content: `Hi! I'm your AI Improvement Coach. Based on your recent performance, I've identified a few specific areas where we can improve to boost your score. What would you like to review first?`
+                    },
+                    {
+                        id: (Date.now() + 1).toString(),
+                        role: 'bot',
+                        type: 'options',
+                        options: unresolvedTopics.map(t => ({
+                            label: t.topic,
+                            action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback)
+                        }))
+                    }
+                ]);
+            } else {
+                 setMessages([
+                    {
+                        id: Date.now().toString(),
+                        role: 'bot',
+                        type: 'text',
+                        content: `Hi! I'm your AI Improvement Coach. Great job! It looks like you have resolved all your weak topics for now.`
+                    }
+                ]);
+            }
+        } else if (weakTopics.length === 0 && messages.length === 0) {
+            setMessages([
+                {
+                    id: Date.now().toString(),
+                    role: 'bot',
+                    type: 'text',
+                    content: `Hi there! I don't have enough data from your tests to find any weak topics yet. Keep practicing!`
+                }
+            ]);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [weakTopics.length]); // Intentionally omitting messages to avoid loops
+
+    const generateOptionsMessage = () => {
+         const unresolvedTopics = buildWeakTopics().filter(t => t.status !== 'resolved');
+         if (unresolvedTopics.length > 0) {
+               return {
+                    id: Date.now().toString(),
+                    role: 'bot',
+                    type: 'options',
+                    content: 'Which topic would you like to tackle next?',
+                    options: unresolvedTopics.map(t => ({
+                        label: t.topic,
+                        action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback)
+                    }))
+                };
+         } else {
+              return {
+                 id: Date.now().toString(),
+                 role: 'bot',
+                 type: 'text',
+                 content: 'Amazing! You have resolved all the weak gaps I found.'
+              };
+         }
+    };
+
+    const handleTopicSelect = async (topic, mistakeType, feedback) => {
+        // Find existing unresolved topic list and replace it so buttons disappear
+        setMessages(prev => {
+            const newMsgs = [...prev];
+            const lastMsg = newMsgs[newMsgs.length - 1];
+            if (lastMsg.type === 'options') {
+                 newMsgs.pop(); 
+            }
+            return [
+                ...newMsgs,
+                { id: Date.now().toString(), role: 'user', type: 'text', content: `I want to review ${topic}` }
+            ];
         });
-    }
 
-    const subjects = Object.keys(subjectChapters);
-
-    useEffect(() => {
-        if (subjects.length > 0 && !activeSubject) setActiveSubject(subjects[0]);
-    }, [subjects, activeSubject]);
-
-    // Close drawer on Escape key
-    useEffect(() => {
-        const handler = (e) => { if (e.key === 'Escape') closeDrawer(); };
-        document.addEventListener('keydown', handler);
-        return () => document.removeEventListener('keydown', handler);
-    }, []);
-
-    const closeDrawer = useCallback(() => {
-        setDrawerOpen(false);
-        setTimeout(() => {
-            setRemediationData(null);
-            setDrawerTopic(null);
-            setMcqAnswer(null);
-            setMcqSubmitted(false);
-        }, 300);
-    }, []);
-
-    const handleFixGap = async (topic, mistakeType, feedback) => {
-        setDrawerTopic(topic);
-        setDrawerOpen(true);
-        setLoadingTopic(topic);
-        setRemediationData(null);
-        setMcqAnswer(null);
-        setMcqSubmitted(false);
+        setIsTyping(true);
         updateGapProgress(topic, 'in_progress');
 
         try {
@@ -182,21 +243,28 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
             });
             const data = await response.json();
             if (data.error) throw new Error(data.error);
-            setRemediationData(data);
+            
+            setMessages(prev => [
+                ...prev,
+                { id: (Date.now() + 1).toString(), role: 'bot', type: 'explanation', data: data },
+                generateOptionsMessage()
+            ]);
+            
         } catch (error) {
             console.error("Remediation failed:", error);
-            alert(error.message || "Failed to generate remediation content.");
-            closeDrawer();
+            setMessages(prev => [
+                ...prev,
+                { id: Date.now().toString(), role: 'bot', type: 'text', content: "Sorry, I had trouble generating that lesson. Let's try another topic." }
+            ]);
         } finally {
-            setLoadingTopic(null);
+            setIsTyping(false);
         }
     };
 
-    const handleMcqSubmit = (optionIndex) => {
-        setMcqAnswer(optionIndex);
-        setMcqSubmitted(true);
-        if (remediationData && optionIndex === remediationData.mcq.correctOption) {
-            updateGapProgress(remediationData.topic, 'resolved');
+    const handleMcqSubmit = (messageId, optionIndex, correctOption, topic) => {
+        setMcqAnswers(prev => ({ ...prev, [messageId]: optionIndex }));
+        if (optionIndex === correctOption) {
+            updateGapProgress(topic, 'resolved');
         }
     };
 
@@ -205,454 +273,307 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
         window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
     };
 
-    const getStatusBadge = (status) => {
-        const styles = {
-            strong: { bg: 'hsla(145, 63%, 42%, 0.12)', color: 'hsl(145, 63%, 32%)', label: 'Strong' },
-            weak: { bg: 'hsla(0, 72%, 51%, 0.12)', color: 'hsl(0, 72%, 41%)', label: 'Weak' },
-            not_tested: { bg: 'hsla(220, 13%, 50%, 0.12)', color: 'hsl(220, 13%, 45%)', label: 'Not Tested' },
-            in_progress: { bg: 'hsla(38, 92%, 50%, 0.12)', color: 'hsl(38, 92%, 40%)', label: 'In Progress' },
-            resolved: { bg: 'hsla(200, 100%, 50%, 0.12)', color: 'var(--primary)', label: 'Resolved' }
-        };
-        const s = styles[status] || styles.not_tested;
+    // --- RENDER HELPERS ---
+
+    const renderText = (msg) => (
+        <div style={{
+            padding: '1rem 1.25rem',
+            borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+            background: msg.role === 'user' ? 'var(--primary)' : 'var(--card)',
+            color: msg.role === 'user' ? 'white' : 'var(--foreground)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+            border: msg.role === 'bot' ? '1px solid var(--border)' : 'none',
+            maxWidth: '85%',
+            lineHeight: '1.5',
+            fontSize: '0.95rem'
+        }}>
+           {msg.content}
+        </div>
+    );
+
+    const renderOptions = (msg) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '85%' }}>
+            {msg.content && (
+                 <div style={{
+                    padding: '1rem 1.25rem',
+                    borderRadius: '20px 20px 20px 4px',
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    fontSize: '0.95rem',
+                    marginBottom: '0.5rem'
+                }}>
+                    {msg.content}
+                </div>
+            )}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {msg.options.map((opt, i) => (
+                    <button
+                        key={i}
+                        onClick={opt.action}
+                        style={{
+                            padding: '0.75rem 1.25rem',
+                            borderRadius: '20px',
+                            background: 'white',
+                            border: '1px solid var(--primary)',
+                            color: 'var(--primary)',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+                        }}
+                        onMouseEnter={e => { e.target.style.background = 'var(--primary)'; e.target.style.color = 'white'; }}
+                        onMouseLeave={e => { e.target.style.background = 'white'; e.target.style.color = 'var(--primary)'; }}
+                    >
+                        {opt.label}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+
+    const renderExplanation = (msg) => {
+        const d = msg.data;
+        if (!d) return null;
+
+        const isMcqSubmitted = mcqAnswers[msg.id] !== undefined;
+        const userAnswer = mcqAnswers[msg.id];
+
         return (
-            <span style={{
-                padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.7rem',
-                fontWeight: 700, background: s.bg, color: s.color, textTransform: 'uppercase'
-            }}>{s.label}</span>
+            <div style={{
+                borderRadius: '20px 20px 20px 4px',
+                background: 'var(--card)', border: '1px solid var(--border)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                maxWidth: '90%', padding: '1.5rem',
+                animation: 'fadeIn 0.4s ease'
+            }}>
+                <h3 style={{ marginTop: 0, color: 'var(--primary)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
+                    {d.topic}
+                </h3>
+
+                {/* The Hook */}
+                {d.hook && (
+                    <div style={{ marginBottom: '1.5rem', background: 'var(--primary-light)', padding: '1rem', borderRadius: '12px' }}>
+                        <p style={{ fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--primary)' }}>💡 {d.hook.title}</p>
+                        <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.6' }}>{d.hook.explanation}</p>
+                    </div>
+                )}
+
+                {/* Chapter Overview */}
+                {d.chapterExplanation && (
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <p style={{ lineHeight: '1.6', fontSize: '0.95rem' }}>{d.chapterExplanation.overview}</p>
+                        
+                        {d.chapterExplanation.keyConcepts?.length > 0 && (
+                            <div style={{ marginTop: '1rem' }}>
+                                <strong style={{ color: 'var(--secondary)' }}>Key Concepts:</strong>
+                                <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.6' }}>
+                                    {d.chapterExplanation.keyConcepts.map((kc, i) => (
+                                        <li key={i}><strong>{kc.heading}:</strong> {kc.explanation}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        
+                        {d.chapterExplanation.importantTerms?.length > 0 && (
+                            <div style={{ marginTop: '1rem', background: 'hsla(230, 100%, 67%, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid hsla(230, 100%, 67%, 0.1)' }}>
+                                <strong style={{ color: 'var(--secondary)' }}>Important Terms:</strong>
+                                <div style={{ display: 'grid', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                    {d.chapterExplanation.importantTerms.map((term, i) => (
+                                        <div key={i} style={{ fontSize: '0.9rem' }}>
+                                            <span style={{ fontWeight: 600 }}>{term.term}:</span> {term.definition}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Diagram */}
+                {d.conceptMap && (
+                    <MermaidDiagram chart={d.conceptMap} />
+                )}
+
+                {/* Common Mistakes */}
+                {d.commonMistakes?.length > 0 && (
+                    <div style={{ marginBottom: '1.5rem', background: 'hsla(0, 72%, 51%, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid hsla(0, 72%, 51%, 0.1)' }}>
+                        <strong style={{ color: 'hsl(0, 72%, 41%)' }}>⚠️ Common Mistakes:</strong>
+                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                            {d.commonMistakes.map((cm, i) => (
+                                <li key={i} style={{ marginBottom: '0.5rem' }}>
+                                    <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>{cm.mistake}</span><br/>
+                                    <strong style={{ color: 'hsl(145, 63%, 32%)' }}>Correct:</strong> {cm.correction}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+                
+                {d.proTips?.length > 0 && (
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <strong style={{ color: 'var(--accent)' }}>⭐ Pro Tips:</strong>
+                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                            {d.proTips.map((tip, i) => (
+                                <li key={i}>{tip}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* MCQ Question Module embedded in the explanation */}
+                {d.mcq && (
+                     <div style={{ marginTop: '2rem', padding: '1.25rem', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                        <p style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1rem' }}>
+                            Let's check your understanding: <br />
+                            <span style={{ fontWeight: 500, opacity: 0.8, fontSize: '0.95rem' }}>{d.mcq.question}</span>
+                        </p>
+                        <div style={{ display: 'grid', gap: '0.5rem' }}>
+                            {d.mcq.options.map((option, i) => {
+                                let bg = 'transparent';
+                                let borderColor = 'var(--border)';
+                                let fontW = 500;
+                                
+                                if (isMcqSubmitted) {
+                                    if (i === d.mcq.correctOption) {
+                                        bg = 'hsla(145, 63%, 42%, 0.12)';
+                                        borderColor = 'hsl(145, 63%, 42%)';
+                                        fontW = 700;
+                                    } else if (i === userAnswer && i !== d.mcq.correctOption) {
+                                        bg = 'hsla(0, 72%, 51%, 0.12)';
+                                        borderColor = 'hsl(0, 72%, 51%)';
+                                    }
+                                }
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => !isMcqSubmitted && handleMcqSubmit(msg.id, i, d.mcq.correctOption, d.topic)}
+                                        disabled={isMcqSubmitted}
+                                        style={{
+                                            padding: '0.75rem 1rem', borderRadius: '10px',
+                                            border: `2px solid ${borderColor}`, background: bg,
+                                            cursor: isMcqSubmitted ? 'default' : 'pointer',
+                                            textAlign: 'left', fontSize: '0.9rem',
+                                            fontWeight: fontW, transition: 'all 0.2s',
+                                            color: 'var(--foreground)'
+                                        }}
+                                    >
+                                        <span style={{ fontWeight: 700, marginRight: '0.5rem', opacity: 0.5 }}>
+                                            {String.fromCharCode(65 + i)}.
+                                        </span>
+                                        {option}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {isMcqSubmitted && (
+                            <div style={{
+                                marginTop: '1rem', padding: '1rem', borderRadius: '10px',
+                                background: userAnswer === d.mcq.correctOption
+                                    ? 'hsla(145, 63%, 42%, 0.08)' : 'hsla(0, 72%, 51%, 0.08)',
+                                fontSize: '0.9rem', fontWeight: 600,
+                                color: userAnswer === d.mcq.correctOption
+                                    ? 'hsl(145, 63%, 32%)' : 'hsl(0, 72%, 41%)'
+                            }}>
+                                {userAnswer === d.mcq.correctOption
+                                    ? 'Correct! This gap has been marked as resolved.'
+                                    : `Incorrect. The correct answer is ${String.fromCharCode(65 + d.mcq.correctOption)}. Review the explanation and try watching the video.`
+                                }
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                 {/* Video CTA */}
+                 <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                     <button
+                        onClick={() => handleWatchVideo(d.topic)}
+                        style={{
+                            padding: '0.75rem 1.5rem', borderRadius: '25px',
+                            background: 'transparent', border: '1px solid var(--border)',
+                            color: 'var(--foreground)', cursor: 'pointer', fontWeight: 600,
+                            fontSize: '0.85rem'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+                    >
+                        🎥 Search YouTube for this Topic
+                    </button>
+                 </div>
+            </div>
         );
     };
 
-    const stepBadge = (num, bg) => (
-        <span style={{
-            width: '28px', height: '28px', borderRadius: '50%', background: bg, color: 'white',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.8rem', fontWeight: 700, flexShrink: 0
-        }}>{num}</span>
-    );
-
-    if (subjects.length === 0) {
-        return (
-            <div className="card glass" style={{ animation: 'fadeIn 0.5s ease', textAlign: 'center', padding: '4rem' }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--primary)' }}>No Data Yet</h2>
-                <p style={{ opacity: 0.7 }}>Upload and analyze an answer sheet first to see your chapter-wise gaps for {studentClass}.</p>
-                <style jsx>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-            </div>
-        );
-    }
-
-    const chapters = subjectChapters[activeSubject] || [];
-    const weakCount = chapters.filter(c => c.status === 'weak').length;
-    const strongCount = chapters.filter(c => c.status === 'strong' || c.status === 'resolved').length;
-    const notTestedCount = chapters.filter(c => c.status === 'not_tested').length;
-
     return (
-        <>
-            <div style={{ animation: 'fadeIn 0.5s ease' }}>
-                <div style={{ marginBottom: '2rem' }}>
-                    <h2 style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Remediation Agent</h2>
-                    <p style={{ opacity: 0.6 }}>Fix your knowledge gaps topic by topic for {studentClass}</p>
-                </div>
-
-                {/* Subject tabs */}
-                <div className="tabs-container" style={{
-                    marginBottom: '1.5rem', display: 'flex', gap: '0.5rem',
-                    overflowX: 'auto', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)'
-                }}>
-                    {subjects.map(subject => (
-                        <button
-                            key={subject}
-                            onClick={() => setActiveSubject(subject)}
-                            className={`tab-item ${activeSubject === subject ? 'active' : ''}`}
-                            style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem', whiteSpace: 'nowrap' }}
-                        >{subject}</button>
-                    ))}
-                </div>
-
-                {/* Summary stats */}
-                <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-                    {[
-                        { label: 'Weak', count: weakCount, color: 'hsl(0, 72%, 51%)' },
-                        { label: 'Strong', count: strongCount, color: 'hsl(145, 63%, 42%)' },
-                        { label: 'Not Tested', count: notTestedCount, color: 'hsl(220, 13%, 50%)' }
-                    ].map(stat => (
-                        <div key={stat.label} className="card" style={{
-                            padding: '0.75rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem',
-                            flex: '1 1 120px', minWidth: '120px'
-                        }}>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: stat.color }}>{stat.count}</div>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 600, opacity: 0.7, textTransform: 'uppercase' }}>{stat.label}</div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Chapter list */}
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                    {chapters.map((chapter, i) => (
-                        <div key={i} className="card glass" style={{
-                            padding: '1rem 1.5rem',
-                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                            flexWrap: 'wrap', gap: '0.75rem',
-                            borderLeft: `3px solid ${chapter.status === 'weak' ? 'hsl(0, 72%, 51%)' :
-                                chapter.status === 'strong' ? 'hsl(145, 63%, 42%)' :
-                                    chapter.status === 'resolved' ? 'var(--primary)' :
-                                        chapter.status === 'in_progress' ? 'hsl(38, 92%, 50%)' : 'var(--border)'}`
-                        }}>
-                            <div style={{ flex: '1 1 200px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
-                                    <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{chapter.topic}</span>
-                                    {getStatusBadge(chapter.status)}
-                                </div>
-                                {chapter.percentage !== null && (
-                                    <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>Score: {chapter.percentage}%</span>
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                {(chapter.status === 'weak' || chapter.status === 'in_progress') && (
-                                    <button
-                                        onClick={() => handleFixGap(chapter.topic, chapter.mistakeType, chapter.feedback)}
-                                        disabled={loadingTopic === chapter.topic}
-                                        className="btn-primary"
-                                        style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '20px' }}
-                                    >
-                                        {loadingTopic === chapter.topic ? 'Loading...' : 'Fix this Gap'}
-                                    </button>
-                                )}
-                                <button
-                                    onClick={() => handleWatchVideo(chapter.topic)}
-                                    style={{
-                                        padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '20px',
-                                        background: 'transparent', border: '1px solid var(--border)',
-                                        color: 'var(--foreground)', cursor: 'pointer', fontWeight: 600,
-                                        transition: 'border-color 0.2s'
-                                    }}
-                                    onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
-                                    onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
-                                >Watch Video</button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+        <div style={{ height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', animation: 'fadeIn 0.5s ease' }}>
+             <div style={{ marginBottom: '1rem', flexShrink: 0 }}>
+                <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.8rem' }}>🤖</span> AI Improvement Coach
+                </h2>
+                <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>Chat with me to fix your knowledge gaps</p>
             </div>
 
-            {/* Overlay */}
-            {drawerOpen && (
-                <div
-                    onClick={closeDrawer}
-                    style={{
-                        position: 'fixed', inset: 0, zIndex: 2000,
-                        background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
-                        transition: 'opacity 0.3s', opacity: drawerOpen ? 1 : 0
-                    }}
-                />
-            )}
-
-            {/* Sliding Drawer */}
-            <div
-                ref={drawerRef}
-                style={{
-                    position: 'fixed', top: 0, right: 0, bottom: 0,
-                    width: 'min(620px, 90vw)', zIndex: 2001,
-                    background: 'var(--background)',
-                    borderLeft: '1px solid var(--border)',
-                    boxShadow: drawerOpen ? '-8px 0 40px rgba(0,0,0,0.15)' : 'none',
-                    transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)',
-                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    overflowY: 'auto', overflowX: 'hidden'
+            <div 
+                ref={scrollRef}
+                style={{ 
+                    flex: '1', 
+                    background: 'hsla(0,0%,100%,0.5)', 
+                    borderRadius: '16px', 
+                    border: '1px solid var(--border)',
+                    overflowY: 'auto',
+                    padding: '2rem 1.5rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.5rem'
                 }}
             >
-                {/* Drawer header */}
-                <div className="glass" style={{
-                    position: 'sticky', top: 0, zIndex: 10,
-                    padding: '1.25rem 1.5rem',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    borderBottom: '1px solid var(--border)'
-                }}>
-                    <div>
-                        <h3 style={{ fontSize: '1.2rem', margin: 0, color: 'var(--primary)' }}>
-                            {drawerTopic || 'Loading...'}
-                        </h3>
-                        <p style={{ fontSize: '0.8rem', opacity: 0.5, margin: '0.2rem 0 0' }}>
-                            AI Tutor - {studentClass}
-                        </p>
+                {messages.map((msg) => (
+                    <div key={msg.id} style={{
+                        display: 'flex',
+                        justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                        alignItems: 'flex-end',
+                        gap: '0.5rem'
+                    }}>
+                        {msg.role === 'bot' && (
+                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                                 🤖
+                             </div>
+                        )}
+                        {msg.type === 'text' && renderText(msg)}
+                        {msg.type === 'options' && renderOptions(msg)}
+                        {msg.type === 'explanation' && renderExplanation(msg)}
                     </div>
-                    <button
-                        onClick={closeDrawer}
-                        style={{
-                            width: '36px', height: '36px', borderRadius: '50%',
-                            border: '1px solid var(--border)', background: 'var(--card)',
-                            color: 'var(--foreground)', cursor: 'pointer', fontSize: '1.1rem',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}
-                    >x</button>
-                </div>
-
-                {/* Drawer content */}
-                <div style={{ padding: '1.5rem' }}>
-                    {loadingTopic && !remediationData && (
-                        <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-                            <div style={{
-                                width: '48px', height: '48px', borderRadius: '50%',
-                                border: '3px solid var(--border)', borderTopColor: 'var(--primary)',
-                                animation: 'spin 0.8s linear infinite', margin: '0 auto 1.5rem'
-                            }} />
-                            <h3 style={{ color: 'var(--primary)', marginBottom: '0.5rem' }}>Generating Explanation...</h3>
-                            <p style={{ opacity: 0.5, fontSize: '0.9rem' }}>Teaching the full chapter with visual aids</p>
+                ))}
+                
+                {isTyping && (
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
+                            🤖
                         </div>
-                    )}
-
-                    {remediationData && (
-                        <div style={{ animation: 'fadeIn 0.4s ease' }}>
-
-                            {/* Step 1: The Hook */}
-                            <div style={{ marginBottom: '2rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                    {stepBadge(1, 'var(--primary)')}
-                                    <h4 style={{ margin: 0 }}>The Hook</h4>
-                                </div>
-                                {remediationData.hook && (
-                                    <div style={{
-                                        padding: '1.25rem', borderRadius: '12px',
-                                        background: 'var(--primary-light)', border: '1px solid var(--border)',
-                                        lineHeight: '1.7', fontSize: '0.95rem'
-                                    }}>
-                                        {remediationData.hook.title && (
-                                            <p style={{ fontWeight: 700, marginBottom: '0.5rem', color: 'var(--primary)' }}>
-                                                {remediationData.hook.title}
-                                            </p>
-                                        )}
-                                        <p style={{ margin: 0 }}>{remediationData.hook.explanation}</p>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Step 2: Full Chapter */}
-                            {remediationData.chapterExplanation && (
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                        {stepBadge(2, 'var(--secondary)')}
-                                        <h4 style={{ margin: 0 }}>Full Chapter: {remediationData.topic}</h4>
-                                    </div>
-                                    <div style={{
-                                        padding: '1.5rem', borderRadius: '12px',
-                                        background: 'hsl(230, 100%, 98%)', border: '1px solid hsla(230, 100%, 67%, 0.2)',
-                                        lineHeight: '1.7', fontSize: '0.95rem'
-                                    }}>
-                                        {remediationData.chapterExplanation.overview && (
-                                            <p style={{ marginBottom: '1.5rem', fontSize: '1rem', fontWeight: 500 }}>
-                                                {remediationData.chapterExplanation.overview}
-                                            </p>
-                                        )}
-
-                                        {/* Key Concepts */}
-                                        {remediationData.chapterExplanation.keyConcepts?.length > 0 && (
-                                            <div style={{ marginBottom: '1.5rem' }}>
-                                                <p style={{ fontWeight: 700, color: 'var(--secondary)', marginBottom: '0.75rem', fontSize: '1rem' }}>Key Concepts</p>
-                                                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                                                    {remediationData.chapterExplanation.keyConcepts.map((c, i) => (
-                                                        <div key={i} style={{
-                                                            padding: '1rem', borderRadius: '10px',
-                                                            background: 'rgba(255,255,255,0.6)', border: '1px solid var(--border)'
-                                                        }}>
-                                                            <p style={{ fontWeight: 700, marginBottom: '0.35rem', color: 'var(--secondary)' }}>{c.heading}</p>
-                                                            <p style={{ margin: 0 }}>{c.explanation}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Important Terms */}
-                                        {remediationData.chapterExplanation.importantTerms?.length > 0 && (
-                                            <div style={{ marginBottom: '1.5rem' }}>
-                                                <p style={{ fontWeight: 700, color: 'var(--secondary)', marginBottom: '0.75rem', fontSize: '1rem' }}>Important Terms</p>
-                                                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                                                    {remediationData.chapterExplanation.importantTerms.map((item, i) => (
-                                                        <div key={i} style={{
-                                                            padding: '0.75rem 1rem', borderRadius: '8px',
-                                                            background: 'hsla(230, 100%, 67%, 0.06)',
-                                                            border: '1px solid hsla(230, 100%, 67%, 0.12)'
-                                                        }}>
-                                                            <span style={{ fontWeight: 700, color: 'var(--secondary)' }}>{item.term}: </span>
-                                                            <span>{item.definition}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Formulas */}
-                                        {remediationData.chapterExplanation.formulas?.length > 0 && remediationData.chapterExplanation.formulas[0] !== '' && (
-                                            <div style={{ marginBottom: '1.5rem' }}>
-                                                <p style={{ fontWeight: 700, color: 'var(--secondary)', marginBottom: '0.5rem', fontSize: '1rem' }}>Formulas</p>
-                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                                    {remediationData.chapterExplanation.formulas.map((f, i) => (
-                                                        <span key={i} style={{
-                                                            padding: '0.5rem 1rem', borderRadius: '8px',
-                                                            background: 'hsla(230, 100%, 67%, 0.1)',
-                                                            fontFamily: 'monospace', fontSize: '0.9rem',
-                                                            border: '1px solid hsla(230, 100%, 67%, 0.2)'
-                                                        }}>{f}</span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* NCERT Examples */}
-                                        {remediationData.chapterExplanation.ncertExamples?.length > 0 && (
-                                            <div>
-                                                <p style={{ fontWeight: 700, color: 'var(--secondary)', marginBottom: '0.5rem', fontSize: '1rem' }}>NCERT Examples</p>
-                                                <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-                                                    {remediationData.chapterExplanation.ncertExamples.map((ex, i) => (
-                                                        <li key={i} style={{ marginBottom: '0.4rem' }}>{ex}</li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Step 3: Visual Concept Map */}
-                            {remediationData.conceptMap && (
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                        {stepBadge(3, '#10b981')}
-                                        <h4 style={{ margin: 0 }}>Concept Map</h4>
-                                    </div>
-                                    <MermaidDiagram chart={remediationData.conceptMap} />
-                                </div>
-                            )}
-
-                            {/* Step 4: Common Mistakes */}
-                            {remediationData.commonMistakes?.length > 0 && (
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                        {stepBadge(4, 'hsl(0, 72%, 51%)')}
-                                        <h4 style={{ margin: 0 }}>Common Mistakes to Avoid</h4>
-                                    </div>
-                                    <div style={{ display: 'grid', gap: '0.75rem' }}>
-                                        {remediationData.commonMistakes.map((item, i) => (
-                                            <div key={i} style={{
-                                                padding: '1rem 1.25rem', borderRadius: '10px',
-                                                background: 'hsla(0, 72%, 51%, 0.04)',
-                                                border: '1px solid hsla(0, 72%, 51%, 0.12)', lineHeight: '1.6'
-                                            }}>
-                                                <p style={{ fontWeight: 700, color: 'hsl(0, 72%, 41%)', marginBottom: '0.35rem' }}>{item.mistake}</p>
-                                                <p style={{ margin: 0, color: 'hsl(145, 63%, 32%)' }}>Correction: {item.correction}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Step 5: Pro Tips */}
-                            {remediationData.proTips?.length > 0 && (
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                        {stepBadge(5, 'var(--accent)')}
-                                        <h4 style={{ margin: 0 }}>Pro Tips for Scoring</h4>
-                                    </div>
-                                    <div style={{
-                                        padding: '1.25rem', borderRadius: '12px',
-                                        background: 'hsla(280, 100%, 65%, 0.06)', border: '1px solid hsla(280, 100%, 65%, 0.15)',
-                                        lineHeight: '1.7', fontSize: '0.95rem'
-                                    }}>
-                                        <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-                                            {remediationData.proTips.map((tip, i) => (
-                                                <li key={i} style={{ marginBottom: '0.5rem', fontWeight: 500 }}>{tip}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Step 6: MCQ Check */}
-                            {remediationData.mcq && (
-                                <div style={{ marginBottom: '2rem' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                                        {stepBadge(6, 'hsl(145, 63%, 42%)')}
-                                        <h4 style={{ margin: 0 }}>Check Your Understanding</h4>
-                                    </div>
-                                    <div style={{
-                                        padding: '1.25rem', borderRadius: '12px',
-                                        background: 'var(--card)', border: '1px solid var(--border)', lineHeight: '1.7'
-                                    }}>
-                                        <p style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1rem' }}>
-                                            {remediationData.mcq.question}
-                                        </p>
-                                        <div style={{ display: 'grid', gap: '0.5rem' }}>
-                                            {remediationData.mcq.options.map((option, i) => {
-                                                let bg = 'transparent';
-                                                let borderColor = 'var(--border)';
-                                                let fontW = 500;
-                                                if (mcqSubmitted) {
-                                                    if (i === remediationData.mcq.correctOption) {
-                                                        bg = 'hsla(145, 63%, 42%, 0.12)';
-                                                        borderColor = 'hsl(145, 63%, 42%)';
-                                                        fontW = 700;
-                                                    } else if (i === mcqAnswer && i !== remediationData.mcq.correctOption) {
-                                                        bg = 'hsla(0, 72%, 51%, 0.12)';
-                                                        borderColor = 'hsl(0, 72%, 51%)';
-                                                    }
-                                                }
-                                                return (
-                                                    <button
-                                                        key={i}
-                                                        onClick={() => !mcqSubmitted && handleMcqSubmit(i)}
-                                                        disabled={mcqSubmitted}
-                                                        style={{
-                                                            padding: '0.75rem 1rem', borderRadius: '10px',
-                                                            border: `2px solid ${borderColor}`, background: bg,
-                                                            cursor: mcqSubmitted ? 'default' : 'pointer',
-                                                            textAlign: 'left', fontSize: '0.9rem',
-                                                            fontWeight: fontW, transition: 'all 0.2s',
-                                                            color: 'var(--foreground)'
-                                                        }}
-                                                    >
-                                                        <span style={{ fontWeight: 700, marginRight: '0.5rem', opacity: 0.5 }}>
-                                                            {String.fromCharCode(65 + i)}.
-                                                        </span>
-                                                        {option}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                        {mcqSubmitted && (
-                                            <div style={{
-                                                marginTop: '1rem', padding: '1rem', borderRadius: '10px',
-                                                background: mcqAnswer === remediationData.mcq.correctOption
-                                                    ? 'hsla(145, 63%, 42%, 0.08)' : 'hsla(0, 72%, 51%, 0.08)',
-                                                fontSize: '0.9rem', fontWeight: 600,
-                                                color: mcqAnswer === remediationData.mcq.correctOption
-                                                    ? 'hsl(145, 63%, 32%)' : 'hsl(0, 72%, 41%)'
-                                            }}>
-                                                {mcqAnswer === remediationData.mcq.correctOption
-                                                    ? 'Correct! This gap has been marked as resolved.'
-                                                    : `Incorrect. The correct answer is ${String.fromCharCode(65 + remediationData.mcq.correctOption)}. Review the explanation above and try the video.`
-                                                }
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Watch Video CTA */}
-                            <div style={{ textAlign: 'center', padding: '1rem 0 0.5rem' }}>
-                                <button
-                                    onClick={() => handleWatchVideo(remediationData.topic)}
-                                    className="btn-primary"
-                                    style={{ padding: '0.75rem 2rem', fontSize: '0.9rem', borderRadius: '25px' }}
-                                >Watch Video Explanation</button>
-                            </div>
+                        <div style={{
+                            padding: '1rem', borderRadius: '20px 20px 20px 4px',
+                            background: 'var(--card)', border: '1px solid var(--border)',
+                            display: 'flex', gap: '4px', alignItems: 'center'
+                        }}>
+                            <div className="typing-dot" />
+                            <div className="typing-dot" style={{ animationDelay: '0.2s' }} />
+                            <div className="typing-dot" style={{ animationDelay: '0.4s' }} />
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
-            <style jsx>{`
+             <style jsx>{`
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                @keyframes spin { to { transform: rotate(360deg); } }
+                .typing-dot {
+                    width: 6px; height: 6px; background: var(--primary); borderRadius: 50%;
+                    animation: bounce 1.4s infinite ease-in-out both;
+                }
+                @keyframes bounce {
+                    0%, 80%, 100% { transform: scale(0); }
+                    40% { transform: scale(1); }
+                }
             `}</style>
-        </>
+        </div>
     );
 }
