@@ -1,0 +1,334 @@
+[
+  {
+    "timestamp": 1773393011774,
+    "data": {
+      "overallScore": 6,
+      "totalMarks": 6,
+      "studentClass": "6th CBSE",
+      "curriculum": "NCERT",
+      "questions": [
+        {
+          "id": 1,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "Which of the following is a type of protein-rich food?",
+          "studentAnswer": "c. Pulses",
+          "correctAnswer": "c. Pulses",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 2,
+          "subject": "Science",
+          "topic": "Sorting Materials into Groups",
+          "question": "Which of the following is a type of metal?",
+          "studentAnswer": "d. Metal sheet",
+          "correctAnswer": "d. Metal sheet",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 3,
+          "subject": "Science",
+          "topic": "Separation of Substances",
+          "question": "What is the process of separating substances using a filter?",
+          "studentAnswer": "b. Filtration",
+          "correctAnswer": "b. Filtration",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 4,
+          "subject": "Science",
+          "topic": "Body Movements",
+          "question": "What is the part of a plant that helps it to stand upright?",
+          "studentAnswer": "c. stem",
+          "correctAnswer": "c. stem",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 5,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "Which disease is caused by a lack of vitamin C?",
+          "studentAnswer": "c. scurvy",
+          "correctAnswer": "c. scurvy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 6,
+          "subject": "Science",
+          "topic": "Getting to know Plants",
+          "question": "What is the part of a plant that grows underground?",
+          "notAnswered": true,
+          "studentAnswer": "c. stem",
+          "correctAnswer": "root",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Incorrect answer",
+          "mistakeType": "Incorrect concept"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": 1773392835872,
+    "data": {
+      "overallScore": 5,
+      "totalMarks": 5,
+      "studentClass": "6th CBSE",
+      "curriculum": "NCERT",
+      "questions": [
+        {
+          "id": 1,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "Which of the following is a source of protein?",
+          "studentAnswer": "c. Pulses",
+          "correctAnswer": "c. Pulses",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 2,
+          "subject": "Science",
+          "topic": "Sorting Materials into Groups",
+          "question": "Which of the following is a metal?",
+          "studentAnswer": "d. Metal sheet",
+          "correctAnswer": "d. Metal sheet",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 3,
+          "subject": "Science",
+          "topic": "Separation of Substances",
+          "question": "Which method is used to separate solid particles from a liquid?",
+          "studentAnswer": "b. Filtration",
+          "correctAnswer": "b. Filtration",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 4,
+          "subject": "Science",
+          "topic": "Getting to know Plants",
+          "question": "What is the female reproductive part of a flower?",
+          "studentAnswer": "c. Pistil",
+          "correctAnswer": "c. Pistil",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 5,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "Which disease is caused by a lack of vitamin C?",
+          "studentAnswer": "c. Scurvy",
+          "correctAnswer": "c. Scurvy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": 1773392788246,
+    "data": {
+      "overallScore": 0,
+      "totalMarks": 5,
+      "studentClass": "6th CBSE",
+      "curriculum": "NCERT",
+      "questions": [
+        {
+          "id": 1,
+          "subject": "Mathematics",
+          "topic": "Algebra",
+          "question": "Solve for K: 3K + 5 = 2K + 15",
+          "studentAnswer": "K = 2K - 3K + 15 - 5 = 10",
+          "correctAnswer": "K = 10",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "The student's steps are unclear and incorrect. The correct steps are: 3K + 5 = 2K + 15, 3K - 2K = 15 - 5, K = 10",
+          "mistakeType": "Calculation Error"
+        },
+        {
+          "id": 2,
+          "subject": "Mathematics",
+          "topic": "Algebra",
+          "question": "If 5X + 11 = 3X + 31, find X",
+          "studentAnswer": "5X - 3X = 31 + 11, 2X = 42 / 2 = 21, X = 21",
+          "correctAnswer": "X = 10",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "The student's calculation is incorrect. The correct steps are: 5X - 3X = 31 - 11, 2X = 20, X = 10",
+          "mistakeType": "Calculation Error"
+        },
+        {
+          "id": 3,
+          "subject": "Mathematics",
+          "topic": "Algebra",
+          "question": "The sum of two algebraic expressions 3X + 2 and X + 5 is",
+          "studentAnswer": "3X + 2 + X + 5 = 4X + 7X = 11X",
+          "correctAnswer": "4X + 7",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "The student's answer is partially correct but not fully. The correct answer is 4X + 7",
+          "mistakeType": "Conceptual Error"
+        },
+        {
+          "id": 4,
+          "subject": "Mathematics",
+          "topic": "Algebra",
+          "question": "To translate '5 added to x' in algebra we write",
+          "studentAnswer": "5 + X",
+          "correctAnswer": "X + 5 or 5 + X",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "The student's answer is correct",
+          "mistakeType": "None"
+        },
+        {
+          "id": 5,
+          "subject": "Mathematics",
+          "topic": "Algebra",
+          "question": "An algebraic equation is a mathematical statement in which two expressions are joined by an equal sign",
+          "studentAnswer": "True",
+          "correctAnswer": "True",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "The student's answer is correct",
+          "mistakeType": "None"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": 1773391626610,
+    "data": {
+      "overallScore": 5,
+      "totalMarks": 5,
+      "studentClass": "6th CBSE",
+      "curriculum": "NCERT",
+      "questions": [
+        {
+          "id": 1,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "What are pulses?",
+          "studentAnswer": "c. Pulses",
+          "correctAnswer": "c. Pulses",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 2,
+          "subject": "Science",
+          "topic": "Sorting Materials into Groups",
+          "question": "What is a metal sheet?",
+          "studentAnswer": "d. Metal sheet",
+          "correctAnswer": "d. Metal sheet",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 3,
+          "subject": "Science",
+          "topic": "Separation of Substances",
+          "question": "What is the process of separating substances using a filter?",
+          "studentAnswer": "b. Filtration",
+          "correctAnswer": "b. Filtration",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        },
+        {
+          "id": 4,
+          "subject": "Science",
+          "topic": "Getting to know Plants",
+          "question": "What is the female part of a flower?",
+          "studentAnswer": "c. Petals",
+          "correctAnswer": "d. Pistil",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Incorrect answer. The correct answer is d. Pistil.",
+          "mistakeType": "Incorrect concept"
+        },
+        {
+          "id": 5,
+          "subject": "Science",
+          "topic": "Components of Food",
+          "question": "What is the disease caused by a lack of vitamin C?",
+          "studentAnswer": "c. Scurvy",
+          "correctAnswer": "c. Scurvy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer",
+          "mistakeType": "None"
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": 1773315451601,
+    "data": {
+      "overallScore": 9,
+      "totalMarks": 10,
+      "studentClass": "6th CBSE",
+      "curriculum": "NCERT",
+      "questions": [
+        {
+          "id": 1,
+          "subject": "Science",
+          "topic": "Separation of Substances",
+          "question": "Define a mixture.",
+          "studentAnswer": "A mixture is a substance made by combining two or more pure substances in such a way that no chemical reaction occurs.",
+          "correctAnswer": "A mixture is a substance made by combining two or more pure substances in such a way that no chemical reaction occurs.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct definition provided.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 2,
+          "subject": "Science",
+          "topic": "Separation of Substances",
+          "question": "What are the different methods used to separate a solid-solid mixture?",
+          "studentAnswer": "The methods used are: i. Handpicking - involves simply picking out substance by hand; ii. Threshing - used to separate seeds of grains from stalks; iii. Winnowing - separates heavier and lighter components by blowing air.",
+          "correctAnswer": "The methods used are: i. Handpicking; ii. Threshing; iii. Winnowing; iv. Sieving; v. Sedimentation and Decantation.",
+          "marksObtained": 7,
+          "maxMarks": 8,
+          "feedback": "Mostly correct, but missed Sieving and Sedimentation and Decantation.",
+          "mistakeType": "Incomplete"
+        }
+      ]
+    }
+  }
+]

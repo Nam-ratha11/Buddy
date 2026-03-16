@@ -1,8 +1,36 @@
 "use client";
 
-export default function Dashboard({ evaluation }) {
-    // Simulate some historical data based on current evaluation
-    const topics = evaluation.questions.reduce((acc, q) => {
+export default function Dashboard({ evaluation, history = [], studentClass }) {
+    // If no single evaluation is provided, aggregate questions from history
+    let questionsToAnalyze = [];
+    if (evaluation && evaluation.questions) {
+        questionsToAnalyze = evaluation.questions;
+    } else if (history.length > 0) {
+        questionsToAnalyze = history.reduce((acc, item) => {
+            if (item.data && item.data.questions) {
+                return acc.concat(item.data.questions);
+            }
+            return acc;
+        }, []);
+    }
+
+    if (questionsToAnalyze.length === 0) {
+        return (
+            <div className="dashboard card glass" style={{ animation: 'fadeIn 0.5s ease', textAlign: 'center', padding: '4rem' }}>
+                <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--primary)' }}>No Insights Yet</h2>
+                <p style={{ opacity: 0.7 }}>Upload an answer sheet to see your subject mastery for {studentClass}.</p>
+                <style jsx>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+            </div>
+        );
+    }
+
+    // Simulate some historical data based on current evaluation or aggregated questions
+    const topics = questionsToAnalyze.reduce((acc, q) => {
         if (!acc[q.topic]) {
             acc[q.topic] = {
                 name: q.topic,
@@ -22,7 +50,7 @@ export default function Dashboard({ evaluation }) {
     const topicList = Object.values(topics);
 
     const subjectStats = topicList.reduce((acc, topic) => {
-        const q = evaluation.questions.find(quest => quest.topic === topic.name);
+        const q = questionsToAnalyze.find(quest => quest.topic === topic.name);
         if (!acc[q.subject]) {
             acc[q.subject] = { name: q.subject, total: 0, obtained: 0 };
         }
@@ -33,12 +61,16 @@ export default function Dashboard({ evaluation }) {
 
     const subjectList = Object.values(subjectStats);
 
+    // Determine the display title
+    const displayClass = evaluation ? (evaluation.studentClass || "Student") : (studentClass || "Student");
+    const isHistorical = !evaluation && history.length > 0;
+
     return (
         <div className="dashboard" style={{ animation: 'fadeIn 0.5s ease' }}>
-            <header style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                <h2 style={{ fontSize: '2rem' }}>Learning <span className="gradient-text">Insights</span></h2>
-                <p style={{ opacity: 0.6 }}>CBSE Class 6 NCERT Progress Tracker</p>
-            </header>
+            <h2 style={{ fontSize: '2rem' }}>Learning Insights</h2>
+            <p style={{ opacity: 0.6 }}>
+                {displayClass} Progress Tracker {isHistorical ? "(All Recent Submissions)" : ""}
+            </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
                 <div className="card glass">
@@ -73,7 +105,7 @@ export default function Dashboard({ evaluation }) {
                                     padding: '1rem', flex: '1 1 120px', textAlign: 'center',
                                     background: count > 0 ? 'var(--primary-light)' : 'var(--card)',
                                     borderColor: count > 0 ? 'var(--primary)' : 'var(--border)',
-                                    boxShadow: count > 0 ? '0 4px 12px hsla(142, 71%, 45%, 0.1)' : 'none'
+                                    boxShadow: count > 0 ? '0 4px 12px hsla(200, 100%, 50%, 0.1)' : 'none'
                                 }}>
                                     <div style={{ fontSize: '2rem', fontWeight: 800, color: count > 0 ? 'var(--primary)' : 'inherit' }}>{count}</div>
                                     <div style={{ fontSize: '0.75rem', fontWeight: 700, opacity: 0.7, textTransform: 'uppercase' }}>{m}s</div>
@@ -81,9 +113,29 @@ export default function Dashboard({ evaluation }) {
                             );
                         })}
                     </div>
-                    <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', lineHeight: '1.5', padding: '1rem', borderRadius: '8px', background: 'rgba(0,0,0,0.02)' }}>
-                        💡 <b>Insight:</b> You are performing exceptionally well in <b>Mathematics</b>! Focus on <b>Science</b> topics where conceptual gaps were identified.
-                    </p>
+                    {(() => {
+                        const sortedSubjects = [...subjectList].sort((a, b) => (b.obtained / b.total) - (a.obtained / a.total));
+                        const best = sortedSubjects[0];
+                        const worst = sortedSubjects.length > 1 ? sortedSubjects[sortedSubjects.length - 1] : null;
+
+                        const weakTopics = topicList
+                            .filter(t => t.obtained < t.total)
+                            .sort((a, b) => (a.obtained / a.total) - (b.obtained / b.total))
+                            .slice(0, 2);
+
+                        return (
+                            <p style={{ marginTop: '1.5rem', fontSize: '0.85rem', lineHeight: '1.5', padding: '1rem', borderRadius: '8px', background: 'rgba(0,0,0,0.02)' }}>
+                                <b>Insight:</b> You are performing {best.obtained / best.total > 0.8 ? 'exceptionally well' : 'well'} in <b>{best.name}</b>!
+                                {worst && worst !== best ? (
+                                    <> Focus on <b>{worst.name}</b> where some gaps were identified.</>
+                                ) : weakTopics.length > 0 ? (
+                                    <> Focus on <b>{weakTopics.map(t => t.name).join(' & ')}</b> to improve your score.</>
+                                ) : (
+                                    <> Keep up the great work across all topics!</>
+                                )}
+                            </p>
+                        );
+                    })()}
                 </div>
             </div>
 
