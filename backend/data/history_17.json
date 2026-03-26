@@ -1,0 +1,973 @@
+[
+  {
+    "timestamp": 1774440969677,
+    "data": {
+      "overallScore": 29,
+      "totalMarks": 40,
+      "questions": [
+        {
+          "id": "1",
+          "topic": "Nutrition in Plants",
+          "question": "Which of the following class of organisms belongs to saprotrophs?",
+          "studentAnswer": "Fungi",
+          "correctAnswer": "a) Fungi",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "2",
+          "topic": "Nutrition in Plants",
+          "question": "Which part of plant is called food factory?",
+          "studentAnswer": "Leaves",
+          "correctAnswer": "c) Leaves",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "3",
+          "topic": "Nutrition in Animals",
+          "question": "The way of taking food by bees is",
+          "studentAnswer": "Sucking",
+          "correctAnswer": "b) Sucking",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "4",
+          "topic": "Nutrition in Animals",
+          "question": "The false feet of Amoeba are used for",
+          "studentAnswer": "movement only",
+          "correctAnswer": "c) Capturing food and movement",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Pseudopodia (false feet) are used for both movement and capturing prey.",
+          "mistakeType": "Conceptual Error",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "5",
+          "topic": "Nutrition in Plants",
+          "question": "The shape of the guard cells in stomata …………",
+          "studentAnswer": "semi-circular",
+          "correctAnswer": "a) Bean shaped",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Guard cells are typically bean-shaped or kidney-shaped.",
+          "mistakeType": "Conceptual Error",
+          "proof": {
+            "source": "gecu110.pdf",
+            "page": 11,
+            "text": "Life Processes in Plants 147 Activity 10.6: Let us examine (demonstration activity) The teacher may demonstrate this activity.  Collect a leaf from a plant such as rhoeo, money plant, onion, hibiscus, coleus, or any grass.  Put it in a beaker fi lled with water.  Carefully peel a thin layer from the lower surface of the leaf.  Place the peel in a watch glass with water.  Now, take a microscope slide and carefully put a drop of water on it.  Using forceps, transfer the peel of the leaf from the watch glass to the slide with the help of forceps.  Put a drop of ink on the leaf peel with the help of a dropper.  Cover the peel with a coverslip and observe it under a microscope. What do you observe? Do you notice tiny pores on the peel, as shown in Fig. 10.6? These pores are called stomata. Stomata, present on the surface of leaves, help in the exchange of gases. 10.3 Transport in Plan"
+          }
+        },
+        {
+          "id": "6",
+          "topic": "Heat",
+          "question": "Which material is a poor conductor of heat?",
+          "studentAnswer": "Wool",
+          "correctAnswer": "c) Wool",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "7",
+          "topic": "Heat",
+          "question": "What is the primary reason woollen clothes keep us warm?",
+          "studentAnswer": "They trap air",
+          "correctAnswer": "c) They trap air.",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "8",
+          "topic": "Heat",
+          "question": "Which part of the clinical thermometer contains mercury?",
+          "studentAnswer": "The tube",
+          "correctAnswer": "c) The bulb",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Mercury is stored in the bulb at the end of the thermometer.",
+          "mistakeType": "Incorrect Identification",
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 6,
+            "text": "7.6. Make sure that the bulbs of the thermometer are immersed in soil and water, and do not touch the bottoms or the sides of the bowls.  Place the set-up in sunlight. Fig. 7.6: Measurement of the temperature of soil and water Soil Stand Water Thermometer  Observe the movement of the coloured streak in the water.  As you supply heat, a streak of colour starts moving up and then coming down from the sides (Fig. 7.5b). Why does the streak of coloured water go up in the middle and come down from the sides? The water at the bottom of the beaker gets heated up and becomes hot. It expands, becomes lighter, and rises. The water on the sides of the beaker is comparatively cooler and heavier, and comes down to take the place of the rising water. Then, this water gets heated and in turn also rises. This cycle continues until the entire volume of water gets heated. In this case, the entire volum"
+          }
+        },
+        {
+          "id": "9",
+          "topic": "Nutrition in Animals",
+          "question": "Assertion (A) : Tongue is fleshy muscular organ. Reason (R) : Tongue is used for talking.",
+          "studentAnswer": "A is true & R is false",
+          "correctAnswer": "b) Both A and R are true, but R is not the correct explanation of A",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Both statements are true facts about the tongue, but talking is not the reason why it is a muscular organ.",
+          "mistakeType": "Logic Error",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "10",
+          "topic": "Nutrition in Plants",
+          "question": "Assertion (A) : Green colour in leaves help in photosynthesis. Reason (R) : Photosynthesis results in formation of starch.",
+          "studentAnswer": "Both A & R are true but R is not the correct explanation of A.",
+          "correctAnswer": "b) Both A and R are true, but R is not the correct explanation of A",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct logic.",
+          "mistakeType": null
+        },
+        {
+          "id": "11",
+          "topic": "Heat",
+          "question": "Define Temperature? Mention the device that is used to measure temperature?",
+          "studentAnswer": "A temperature is an hot or cold of an body / object. The device that is used to measure temperature is thermometer",
+          "correctAnswer": "Temperature is the degree of hotness or coldness of an object. A thermometer is used to measure it.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Good definition.",
+          "mistakeType": null
+        },
+        {
+          "id": "12",
+          "topic": "Nutrition in Animals",
+          "question": "What is the function of Tongue? (OR)",
+          "studentAnswer": "The tongue helps for chewing & swallowing.",
+          "correctAnswer": "The tongue helps in mixing saliva with food, chewing, swallowing, and speaking.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "13",
+          "topic": "Nutrition in Plants",
+          "question": "Define Nutrition? Mention the modes of nutrition?",
+          "studentAnswer": "The process where food is taken & used for growth, energy, body building & repair for our body. There are two types of nutrition: Autotrophic nutrients, heterotrophic nutrients.",
+          "correctAnswer": "Nutrition is the mode of taking food by an organism and its utilization by the body. Modes: Autotrophic and Heterotrophic.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Well explained.",
+          "mistakeType": null
+        },
+        {
+          "id": "14",
+          "topic": "Nutrition in Plants",
+          "question": "Why do organisms need to take food?",
+          "studentAnswer": "Organisms need to take food due to they are depend on each other / other trophics like (plants & animals) like we humans, animals & un-green plants.",
+          "correctAnswer": "Organisms need food for energy, growth, repair of damaged parts, and to carry out life processes.",
+          "marksObtained": 2,
+          "maxMarks": 3,
+          "feedback": "Correct, but mention energy and growth more explicitly for full marks.",
+          "mistakeType": "Incomplete Answer",
+          "proof": {
+            "source": "NCERT_7_Science_Ch1_Nutrition_in_Plants",
+            "page": "Curriculum",
+            "text": "Nutrition in Plants - Grade 7 NCERT Science. All organisms require food. Plants can make their food themselves but animals including humans cannot. They get it from plants or animals that eat plants. Thus, humans and animals are directly or indirectly dependent on plants."
+          }
+        },
+        {
+          "id": "15",
+          "topic": "Heat",
+          "question": "What kind of clothes should we wear in summer & winter.",
+          "studentAnswer": "Summer: we should wear very loose clothes & cooler clothes due to in summer heat presence is more (Cotton). Winter: we should wear very thick & woolen clothes or cotton clothes which traps the heat (Woolen).",
+          "correctAnswer": "Light-colored cotton clothes in summer; dark-colored woolen clothes in winter.",
+          "marksObtained": 2,
+          "maxMarks": 3,
+          "feedback": "Identified materials correctly.",
+          "mistakeType": null,
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 8,
+            "text": "heat. You must have observed that a hot utensil kept away from the fl ame cools down after some time. What is the reason for it? The hot utensil cools down by radiating heat to its surroundings. Why is it more comfortable to wear white or light-coloured clothes during summers and dark-coloured clothes during winters? Light-coloured clothes refl ect most of the heat that falls on them, and therefore, we feel more comfortable wearing them during summers. Dark surfaces, on the other hand, absorb more heat, and therefore, we feel more comfortable with dark-coloured clothes during winters. Why is it more comfortable to wear white or light-coloured clothes during summers and dark-coloured clothes during winters? Light-coloured clothes refl ect most of the heat that falls on them, and therefore, we feel more comfortable wearing them during summers. Dark surfaces, on the other hand, absorb more"
+          }
+        },
+        {
+          "id": "16",
+          "topic": "Nutrition in Animals",
+          "question": "Draw a neat labelled diagram of Human digestive system.",
+          "studentAnswer": "Digestive system [Diagram with labels: buccal cavity, salivary glands, oesophagus, stomach, liver, pancreas, large intestine, small intestine, rectum, anus]",
+          "correctAnswer": "Neat diagram with all major parts of the alimentary canal and associated glands labeled.",
+          "marksObtained": 2.5,
+          "maxMarks": 5,
+          "feedback": "Diagram and labels provided but scored partial marks, likely for lack of detail or neatness.",
+          "mistakeType": "Incomplete Answer",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "17",
+          "topic": "Heat",
+          "question": "Define temperature? Draw a neat labelled diagram of clinical thermometer?",
+          "studentAnswer": "Temperature is an hot or cold of an object/body. [Diagram of clinical thermometer]",
+          "correctAnswer": "Definition of temperature and a labeled diagram showing bulb, mercury thread, and scale.",
+          "marksObtained": 2,
+          "maxMarks": 5,
+          "feedback": "Definition correct, but diagram requires proper labels (bulb, kink, scale).",
+          "mistakeType": "Incomplete Answer",
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 6,
+            "text": "7.6. Make sure that the bulbs of the thermometer are immersed in soil and water, and do not touch the bottoms or the sides of the bowls.  Place the set-up in sunlight. Fig. 7.6: Measurement of the temperature of soil and water Soil Stand Water Thermometer  Observe the movement of the coloured streak in the water.  As you supply heat, a streak of colour starts moving up and then coming down from the sides (Fig. 7.5b). Why does the streak of coloured water go up in the middle and come down from the sides? The water at the bottom of the beaker gets heated up and becomes hot. It expands, becomes lighter, and rises. The water on the sides of the beaker is comparatively cooler and heavier, and comes down to take the place of the rising water. Then, this water gets heated and in turn also rises. This cycle continues until the entire volume of water gets heated. In this case, the entire volum"
+          }
+        },
+        {
+          "id": "18",
+          "topic": "Nutrition in Plants",
+          "question": "Case study: Nitrogen absorption in plants, abundance gas, and carbohydrate components.",
+          "studentAnswer": "i) Plants cannot absorb nitrogen... bacteria convert... farmers adding fertilisers... ii) Nitrogen... iii) carbon, hydrogen & oxygen.",
+          "correctAnswer": "i) Bacteria convert gas to usable form/fertilisers. ii) Nitrogen. iii) Carbon, hydrogen, oxygen.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Excellent performance on the case study.",
+          "mistakeType": null
+        },
+        {
+          "id": "19",
+          "topic": "Nutrition in Animals",
+          "question": "Case study: Tooth decay, culprits, and number of teeth.",
+          "studentAnswer": "i) at least twice a day... bacteria break down sugar... ii) 32 teeth... iii) Bacteria break down the sugars... release acid... damage the teeth. This is call tooth decay.",
+          "correctAnswer": "i) Twice a day to remove food/bacteria. ii) 32. iii) Gradual damage to teeth caused by acids produced by bacteria.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Very good understanding of dental hygiene.",
+          "mistakeType": null
+        }
+      ],
+      "studentClass": "7th CBSE"
+    }
+  },
+  {
+    "timestamp": 1774420416120,
+    "data": {
+      "overallScore": 38,
+      "totalMarks": 40,
+      "questions": [
+        {
+          "id": 1,
+          "topic": "Nutrition in Plants",
+          "question": "What is the ultimate source of energy for all living organisms?",
+          "studentAnswer": "Solar energy",
+          "correctAnswer": "Solar energy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 2,
+          "topic": "Nutrition in Plants",
+          "question": "Green colour of the plant is due to the presence of ______.",
+          "studentAnswer": "chlorophyll",
+          "correctAnswer": "Chlorophyll",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 3,
+          "topic": "Nutrition in Plants",
+          "question": "Which of the following Organism is not an Autotrophs?",
+          "studentAnswer": "pitcher plant",
+          "correctAnswer": "Fungus",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Pitcher plants are autotrophic as they perform photosynthesis. Fungi are heterotrophic (saprotrophs).",
+          "mistakeType": "Conceptual error",
+          "proof": {
+            "source": "NCERT_7_Science_Ch1_Nutrition_in_Plants",
+            "page": 5,
+            "text": "Other Modes of Nutrition in Plants: There are some plants which do not have chlorophyll. They cannot prepare food. Like humans and animals such plants depend on the food produced by other plants. They use the heterotrophic mode of nutrition. Example: Cuscuta (Amarbel) is a parasite."
+          }
+        },
+        {
+          "id": 4,
+          "topic": "Nutrition in Animals",
+          "question": "Pseudopodia help in the ingestion of food in _____.",
+          "studentAnswer": "Amoeba",
+          "correctAnswer": "Amoeba",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 5,
+          "topic": "Nutrition in Animals",
+          "question": "The complete digestion & absorption of food occurs in _____.",
+          "studentAnswer": "Small intestine",
+          "correctAnswer": "Small intestine",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 6,
+          "topic": "Nutrition in Animals",
+          "question": "The largest gland in human body is _____.",
+          "studentAnswer": "Liver",
+          "correctAnswer": "Liver",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 7,
+          "topic": "Heat",
+          "question": "No medium is required for the transfer of heat by the process of _____.",
+          "studentAnswer": "Radiation",
+          "correctAnswer": "Radiation",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 8,
+          "topic": "Heat",
+          "question": "______ type of clothes do we prefer to wear in summer.",
+          "studentAnswer": "Light-coloured",
+          "correctAnswer": "Light-coloured",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 9,
+          "topic": "Nutrition in Animals",
+          "question": "Assertion (A): There are four types of teeth present in mouth. Reason (R): Incisor is a type of teeth which involved in the process of grinding the food.",
+          "studentAnswer": "A is true but R is false",
+          "correctAnswer": "A is true but R is false",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Incisors are used for cutting and biting, not grinding.",
+          "mistakeType": null
+        },
+        {
+          "id": 10,
+          "topic": "Heat",
+          "question": "Assertion (A): Food can be cooked faster in copper bottom vessels. Reason(R): Copper is the best conductor of heat.",
+          "studentAnswer": "Both A and R are True and R is the correct explanation of A",
+          "correctAnswer": "Both A and R are true, and R is the correct explanation of A",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": 11,
+          "topic": "Nutrition in Plants",
+          "question": "Write the differences between autotrophic nutrition & heterotrophic nutrition.",
+          "studentAnswer": "Defined autotrophic nutrition as self-nourishment (plants) and heterotrophic nutrition as nourishment from others (humans, animals).",
+          "correctAnswer": "Autotrophic: Organisms make their own food. Heterotrophic: Organisms depend on other organisms for food.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Well explained with correct examples.",
+          "mistakeType": null
+        },
+        {
+          "id": 12,
+          "topic": "Heat",
+          "question": "Define conductors & give example.",
+          "studentAnswer": "Materials which allow heat to pass through them are called Good Conductors. Examples: Aluminium, copper.",
+          "correctAnswer": "Materials that allow heat to pass through them easily are conductors. Examples: metals like iron, copper, aluminum.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct definition and examples.",
+          "mistakeType": null
+        },
+        {
+          "id": 13,
+          "topic": "Nutrition in Plants",
+          "question": "Define insectivorous plants. Give 2 examples?",
+          "studentAnswer": "Examples: pitcher plant and venus fly trap. They trap and digest insects for extra nutrition like nitrogen, and usually grow in poor soil.",
+          "correctAnswer": "Plants that eat insects are called insectivorous plants. Examples: Pitcher plant, Venus flytrap.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct and detailed answer.",
+          "mistakeType": null
+        },
+        {
+          "id": 14,
+          "topic": "Heat",
+          "question": "Explain about clinical thermometer & laboratory thermometer.",
+          "studentAnswer": "Clinical: 35°C to 42°C, for human body temperature, has a kink. Laboratory: -10°C to 110°C, used in labs, no kink.",
+          "correctAnswer": "Clinical: range 35-42°C, has a kink. Lab: range -10 to 110°C, does not have a kink.",
+          "marksObtained": 3,
+          "maxMarks": 3,
+          "feedback": "Accurate comparison of both thermometers.",
+          "mistakeType": null
+        },
+        {
+          "id": 15,
+          "topic": "Nutrition in Animals",
+          "question": "Mention the types of teeth with their function?",
+          "studentAnswer": "Listed 4 types (molars, premolars, canines, incisors) with functions. Incorrectly stated that milk teeth count is 28.",
+          "correctAnswer": "Incisors (cutting/biting), Canines (tearing), Premolars/Molars (chewing/grinding). Milk teeth: 20, Permanent: 32.",
+          "marksObtained": 2,
+          "maxMarks": 3,
+          "feedback": "Factual error: The count of milk teeth is 20, not 28.",
+          "mistakeType": "Factual error",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": 16,
+          "topic": "Nutrition in Animals",
+          "question": "Explain about feeding & Digestion in Amoeba.",
+          "studentAnswer": "Described it as a microscopic organism using pseudopodia for food ingestion and digestion occurring in food vacuoles.",
+          "correctAnswer": "Amoeba uses pseudopodia to engulf food particles, forming a food vacuole where digestive juices are secreted to break down the food.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Excellent explanation.",
+          "mistakeType": null
+        },
+        {
+          "id": 17,
+          "topic": "Nutrition in Animals",
+          "question": "Draw a neat labelled diagram of human digestive system?",
+          "studentAnswer": "Hand-drawn diagram including buccal cavity, oesophagus, stomach, liver, pancreas, intestines, and anus.",
+          "correctAnswer": "A neat diagram including all major organs of the human digestive system correctly labelled.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Well-drawn and accurately labelled diagram.",
+          "mistakeType": null
+        },
+        {
+          "id": 18,
+          "topic": "Nutrition in Animals",
+          "question": "Case based questions on the stomach.",
+          "studentAnswer": "i) Stomach is the widest part. ii) Mucus, hydrochloric acid, digestive juices. iii) Mucus protects lining; HCl kills bacteria; Digestive juices break down protein.",
+          "correctAnswer": "i) Stomach. ii) Mucus, hydrochloric acid, and digestive juices. iii) HCl kills bacteria and makes medium acidic; digestive juices digest protein.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "All parts answered correctly.",
+          "mistakeType": null
+        },
+        {
+          "id": 19,
+          "topic": "Nutrition in Plants",
+          "question": "Case based questions on components of food and nutrition.",
+          "studentAnswer": "i) Nutrition is the mode of taking food and its utilization. ii) Carbohydrates, proteins, fats, vitamins, and minerals. iii) water, carbon dioxide, minerals.",
+          "correctAnswer": "i) Definition of nutrition. ii) Components (nutrients): carbohydrates, proteins, fats, etc. iii) Raw materials: water, CO2, minerals.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Correct answers.",
+          "mistakeType": null
+        }
+      ],
+      "studentClass": "7th CBSE"
+    }
+  },
+  {
+    "timestamp": 1774411807457,
+    "data": {
+      "overallScore": 29,
+      "totalMarks": 40,
+      "questions": [
+        {
+          "id": "1",
+          "topic": "Nutrition in Plants",
+          "question": "Which of the following class of organisms belongs to saprotrophs?",
+          "studentAnswer": "Fungi",
+          "correctAnswer": "a) Fungi",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct identification of saprotrophs.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "2",
+          "topic": "Nutrition in Plants",
+          "question": "Which part of plant is called food factory?",
+          "studentAnswer": "leaves",
+          "correctAnswer": "c) Leaves",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct answer.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "3",
+          "topic": "Nutrition in Animals",
+          "question": "The way of taking food by bees is",
+          "studentAnswer": "Sucking",
+          "correctAnswer": "b) Sucking",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct identification of feeding method.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "4",
+          "topic": "Nutrition in Animals",
+          "question": "The false feet of Amoeba are used for",
+          "studentAnswer": "movement only",
+          "correctAnswer": "c) Capturing food and movement",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Incomplete answer; pseudopodia (false feet) are used for both movement and capturing food.",
+          "mistakeType": "Incomplete Information",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "5",
+          "topic": "Nutrition in Plants",
+          "question": "The shape of the guard cells in stomata …………",
+          "studentAnswer": "semi-circular",
+          "correctAnswer": "a) Bean shaped",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Incorrect fact; guard cells are typically bean-shaped.",
+          "mistakeType": "Incorrect Choice",
+          "proof": {
+            "source": "gecu110.pdf",
+            "page": 11,
+            "text": "Life Processes in Plants 147 Activity 10.6: Let us examine (demonstration activity) The teacher may demonstrate this activity.  Collect a leaf from a plant such as rhoeo, money plant, onion, hibiscus, coleus, or any grass.  Put it in a beaker fi lled with water.  Carefully peel a thin layer from the lower surface of the leaf.  Place the peel in a watch glass with water.  Now, take a microscope slide and carefully put a drop of water on it.  Using forceps, transfer the peel of the leaf from the watch glass to the slide with the help of forceps.  Put a drop of ink on the leaf peel with the help of a dropper.  Cover the peel with a coverslip and observe it under a microscope. What do you observe? Do you notice tiny pores on the peel, as shown in Fig. 10.6? These pores are called stomata. Stomata, present on the surface of leaves, help in the exchange of gases. 10.3 Transport in Plan"
+          }
+        },
+        {
+          "id": "6",
+          "topic": "Heat",
+          "question": "Which material is a poor conductor of heat?",
+          "studentAnswer": "Wool",
+          "correctAnswer": "c) Wool",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "7",
+          "topic": "Heat",
+          "question": "What is the primary reason woollen clothes keep us warm?",
+          "studentAnswer": "They trap air",
+          "correctAnswer": "c) They trap air.",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct understanding of insulation.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "8",
+          "topic": "Heat",
+          "question": "Which part of the clinical thermometer contains mercury?",
+          "studentAnswer": "The tube",
+          "correctAnswer": "c) The bulb",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Mercury is contained in the bulb of the thermometer.",
+          "mistakeType": "Incorrect Fact",
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 6,
+            "text": "7.6. Make sure that the bulbs of the thermometer are immersed in soil and water, and do not touch the bottoms or the sides of the bowls.  Place the set-up in sunlight. Fig. 7.6: Measurement of the temperature of soil and water Soil Stand Water Thermometer  Observe the movement of the coloured streak in the water.  As you supply heat, a streak of colour starts moving up and then coming down from the sides (Fig. 7.5b). Why does the streak of coloured water go up in the middle and come down from the sides? The water at the bottom of the beaker gets heated up and becomes hot. It expands, becomes lighter, and rises. The water on the sides of the beaker is comparatively cooler and heavier, and comes down to take the place of the rising water. Then, this water gets heated and in turn also rises. This cycle continues until the entire volume of water gets heated. In this case, the entire volum"
+          }
+        },
+        {
+          "id": "9",
+          "topic": "Nutrition in Animals",
+          "question": "Assertion (A) : Tongue is fleshy muscular organ. Reason (R) : Tongue is used for talking.",
+          "studentAnswer": "A is true R is false",
+          "correctAnswer": "b) Both A and R are true, but R is not the correct explanation of A",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Both statements are true, although the reason does not explain why it is a muscular organ.",
+          "mistakeType": "Reasoning Error",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "10",
+          "topic": "Nutrition in Plants",
+          "question": "Assertion (A) : Green colour in leaves help in photosynthesis. Reason (R) : Photosynthesis results in formation of starch.",
+          "studentAnswer": "Both A & R are true but R is not the correct explanation of A.",
+          "correctAnswer": "b) Both A and R are true, but R is not the correct explanation of A",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "11",
+          "topic": "Heat",
+          "question": "Define Temperature? Mention the device that is used to measure temperature?",
+          "studentAnswer": "A temperature is an hot or cold of an body object. The device that is used to measure temperature is thermometer",
+          "correctAnswer": "Temperature is the degree of hotness or coldness of an object. A thermometer is used to measure it.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct definition and device name.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "12",
+          "topic": "Nutrition in Animals",
+          "question": "What is the function of Tongue?",
+          "studentAnswer": "The tongue helps for chewing & swallowing",
+          "correctAnswer": "The tongue helps in mixing saliva with food during chewing and aids in swallowing.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Accurate description of tongue functions.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "13",
+          "topic": "Nutrition in Plants",
+          "question": "Define Nutrition? Mention the modes of nutrition?",
+          "studentAnswer": "The process where food is taken & used for growth, energy, body building & repair for our body. There are two types of nutrition: Auto trophic nutrients, hetero trophic nutrients.",
+          "correctAnswer": "Nutrition is the mode of taking food by an organism and its utilization by the body. Modes: Autotrophic and Heterotrophic.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Well explained.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "14",
+          "topic": "Nutrition in Animals",
+          "question": "Why do organisms need to take food?",
+          "studentAnswer": "Organisms need to take food due to they are depend on each other/other trophics like (plants & animals) like we humans, animals & un-green plants.",
+          "correctAnswer": "Organisms need food for energy to carry out life processes, growth, and repair of damaged body parts.",
+          "marksObtained": 2,
+          "maxMarks": 3,
+          "feedback": "Grammatically weak and the explanation focuses on dependency rather than biological necessity (energy/repair).",
+          "mistakeType": "Vague Explanation",
+          "proof": {
+            "source": "NCERT_7_Science_Ch1_Nutrition_in_Plants",
+            "page": 2,
+            "text": "Heterotrophs: Animals and most other organisms take in food prepared by plants. They are called heterotrophs (heteros = other)."
+          }
+        },
+        {
+          "id": "15",
+          "topic": "Heat",
+          "question": "What kind of clothes should we wear in summer & winter.",
+          "studentAnswer": "Summer:- we should wears very loose clothes & cooler clothes due to in summer heat presence is more. Cotton. Winter:- we should wear very thick & woolen clothes or cotton clothes which traps the heat. Woolen.",
+          "correctAnswer": "Summer: Light colored cotton clothes. Winter: Dark colored woolen clothes.",
+          "marksObtained": 2,
+          "maxMarks": 3,
+          "feedback": "Confused cotton for winter (corrected to wool by teacher). Loose clothes is a good point for summer.",
+          "mistakeType": "Conceptual Error",
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 8,
+            "text": "heat. You must have observed that a hot utensil kept away from the fl ame cools down after some time. What is the reason for it? The hot utensil cools down by radiating heat to its surroundings. Why is it more comfortable to wear white or light-coloured clothes during summers and dark-coloured clothes during winters? Light-coloured clothes refl ect most of the heat that falls on them, and therefore, we feel more comfortable wearing them during summers. Dark surfaces, on the other hand, absorb more heat, and therefore, we feel more comfortable with dark-coloured clothes during winters. Why is it more comfortable to wear white or light-coloured clothes during summers and dark-coloured clothes during winters? Light-coloured clothes refl ect most of the heat that falls on them, and therefore, we feel more comfortable wearing them during summers. Dark surfaces, on the other hand, absorb more"
+          }
+        },
+        {
+          "id": "16",
+          "topic": "Nutrition in Animals",
+          "question": "Draw a neat labelled diagram of Human digestive system.",
+          "studentAnswer": "[Hand-drawn diagram of digestive system with labels like buccal cavity, salivary glands, esophagus, stomach, pancreas, liver, large intestine, small intestine, rectum, anus]",
+          "correctAnswer": "A neat diagram including all major organs labeled clearly.",
+          "marksObtained": 2.5,
+          "maxMarks": 5,
+          "feedback": "Diagram is messy and the drawing of organs is disproportionate.",
+          "mistakeType": "Poor Presentation",
+          "proof": {
+            "source": "gecu109.pdf",
+            "page": 2,
+            "text": "occurs in a long tube called the alimentary canal. This process starts in the mouth and ends at the anus (Fig. 9.1). As food moves through this canal, digestive juices secreted at different parts break it down into simpler forms. This simpler form of food is absorbed by different parts of our alimentary canal and transported to various parts of our body to carry out various functions. 9.1 Nutrition in Animals How do the complex food components get broken down into simpler forms and used by the body in various animals? Is this process the same in all animals or does it vary? Let us fi rst try to understand this process in humans. 9.1.1 Digestion in human beings Let us trace the journey of food inside our body as it passes through diff erent parts of the alimentary canal. Beginning with the mouth cavity The journey of the food you eat begins when it enters your mouth. Your teeth break down"
+          }
+        },
+        {
+          "id": "17",
+          "topic": "Heat",
+          "question": "Define temperature? Draw a neat labelled diagram of clinical thermometer?",
+          "studentAnswer": "Temperature is an hot or cold of an object/body. [Hand-drawn thermometer without labels]",
+          "correctAnswer": "Degree of hotness/coldness. Diagram should show scale (35-42C) and the kink.",
+          "marksObtained": 2,
+          "maxMarks": 5,
+          "feedback": "Missing labels on the diagram. Drawing is basic.",
+          "mistakeType": "Incomplete Drawing",
+          "proof": {
+            "source": "gecu107.pdf",
+            "page": 6,
+            "text": "7.6. Make sure that the bulbs of the thermometer are immersed in soil and water, and do not touch the bottoms or the sides of the bowls.  Place the set-up in sunlight. Fig. 7.6: Measurement of the temperature of soil and water Soil Stand Water Thermometer  Observe the movement of the coloured streak in the water.  As you supply heat, a streak of colour starts moving up and then coming down from the sides (Fig. 7.5b). Why does the streak of coloured water go up in the middle and come down from the sides? The water at the bottom of the beaker gets heated up and becomes hot. It expands, becomes lighter, and rises. The water on the sides of the beaker is comparatively cooler and heavier, and comes down to take the place of the rising water. Then, this water gets heated and in turn also rises. This cycle continues until the entire volume of water gets heated. In this case, the entire volum"
+          }
+        },
+        {
+          "id": "18",
+          "topic": "Nutrition in Plants",
+          "question": "Case based study: How do plants fulfil their requirements of nitrogen? (ii) Name the abundance gas present in air? (iii) Name the components of carbohydrate?",
+          "studentAnswer": "i. Plants cannot absorb nitrogen in this form... bacteria... convert gaseous nitrogen into a soluble form... ii. Nitrogen... iii. carbon, hydrogen & oxygen.",
+          "correctAnswer": "i) Through nitrogen-fixing bacteria (Rhizobium) or fertilizers. ii) Nitrogen. iii) Carbon, Hydrogen, Oxygen.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Excellent response to the case study questions.",
+          "mistakeType": "None"
+        },
+        {
+          "id": "19",
+          "topic": "Nutrition in Animals",
+          "question": "Case based study: (i) How many times the teeth should be cleaned and why? (ii) How many teeth are present normal health person? (iii) Define tooth decay?",
+          "studentAnswer": "i. at least twice a day because if we do not clean our teeth & mouth after eating many harmful bacteria... release acids... damage teeth... ii. 32 teeth... iii. Bacteria break down the sugars... release acid... damage teeth. This is call tooth decay.",
+          "correctAnswer": "i) Twice a day to remove bacteria/acids. ii) 32. iii) Gradual damage to teeth caused by acid from sugar-breaking bacteria.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Well written answers from the text.",
+          "mistakeType": "None"
+        }
+      ],
+      "studentClass": "7th CBSE"
+    }
+  },
+  {
+    "timestamp": 1774410105198,
+    "data": {
+      "overallScore": 38,
+      "totalMarks": 40,
+      "questions": [
+        {
+          "id": 1,
+          "topic": "Nutrition in Plants",
+          "question": "What is the ultimate source of energy for all living organisms?",
+          "studentAnswer": "Solar energy",
+          "correctAnswer": "Solar energy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 2,
+          "topic": "Nutrition in Plants",
+          "question": "Green colour of the plant is due to the presence of ______.",
+          "studentAnswer": "Chlorophyll",
+          "correctAnswer": "Chlorophyll",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 3,
+          "topic": "Nutrition in Plants",
+          "question": "Which of the following Organism is not an Autotrophs?",
+          "studentAnswer": "pitcher plant",
+          "correctAnswer": "Fungus",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Pitcher plants are autotrophic as they contain chlorophyll; Fungi are saprotrophs and do not perform photosynthesis.",
+          "mistakeType": "Conceptual",
+          "proof": {
+            "source": "NCERT_7_Science_Ch1_Nutrition_in_Plants",
+            "page": 5,
+            "text": "Other Modes of Nutrition in Plants: There are some plants which do not have chlorophyll. They cannot prepare food. Like humans and animals such plants depend on the food produced by other plants. They use the heterotrophic mode of nutrition. Example: Cuscuta (Amarbel) is a parasite."
+          }
+        },
+        {
+          "id": 4,
+          "topic": "Nutrition in Animals",
+          "question": "Pseudopodia help in the ingestion of food in _____.",
+          "studentAnswer": "Amoeba",
+          "correctAnswer": "Amoeba",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 5,
+          "topic": "Nutrition in Animals",
+          "question": "The complete digestion & absorption of food occurs in _____.",
+          "studentAnswer": "Small intestine",
+          "correctAnswer": "Small intestine",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 6,
+          "topic": "Nutrition in Animals",
+          "question": "The largest gland in human body is _____.",
+          "studentAnswer": "Liver",
+          "correctAnswer": "Liver",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 7,
+          "topic": "Heat",
+          "question": "No medium is required for the transfer of heat by the process of _____.",
+          "studentAnswer": "Radiation",
+          "correctAnswer": "Radiation",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 8,
+          "topic": "Heat",
+          "question": "______ type of clothes do we prefer to wear in summer.",
+          "studentAnswer": "Light-coloured",
+          "correctAnswer": "Light-coloured",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 9,
+          "topic": "Nutrition in Animals",
+          "question": "Assertion (A): There are four types of teeth present in mouth. Reason (R): Incisor is a type of teeth which involved in the process of grinding the food.",
+          "studentAnswer": "A is true but R is false",
+          "correctAnswer": "A is true but R is false",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Incisors are for biting/cutting, not grinding.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 10,
+          "topic": "Heat",
+          "question": "Assertion (A): Food can be cooked faster in copper bottom vessels. Reason(R): Copper is the best conductor of heat.",
+          "studentAnswer": "Both A and R are True and R is the correct explainition of A.",
+          "correctAnswer": "Both A and R are true, and R is the correct explanation of A",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 11,
+          "topic": "Nutrition in Plants",
+          "question": "Write the differences between autotrophic nutrition & heterotrophic nutrition.",
+          "studentAnswer": "Autotrophic nutrition: plants prepare their own food... Heterotrophic nutrition: organisms that cannot make their own food...",
+          "correctAnswer": "Autotrophs synthesize food from simple substances; Heterotrophs depend on plants/animals for food.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Good definition and examples provided.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 12,
+          "topic": "Heat",
+          "question": "Define conductors & give example.",
+          "studentAnswer": "Material which allows the heat to pass through them are called Good Conductors. Ex: Aluminum, copper.",
+          "correctAnswer": "Materials that allow heat to pass through them easily; e.g., Metals like copper and iron.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct definition and examples.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 13,
+          "topic": "Nutrition in Plants",
+          "question": "Define insectivorous plants. Give 2 examples?",
+          "studentAnswer": "These plant trap and digest Insect... Ex: pitcher plant and venus fly trap.",
+          "correctAnswer": "Plants that trap and digest insects to fulfill their nitrogen requirements. E.g., Pitcher plant, Venus flytrap.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Correct.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 14,
+          "topic": "Heat",
+          "question": "Explain about clinical thermometer & laboratory thermometer.",
+          "studentAnswer": "Clinical thermometer used for human body (35C to 42C), has kink... Laboratory thermometer used in labs (-10C to 110C), no kink...",
+          "correctAnswer": "Clinical: 35°C-42°C, has kink, for body temp. Laboratory: -10°C to 110°C, no kink, for general use.",
+          "marksObtained": 3,
+          "maxMarks": 3,
+          "feedback": "Detailed explanation provided.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 15,
+          "topic": "Nutrition in Animals",
+          "question": "Mention the types of teeth with their function?",
+          "studentAnswer": "Molars/Premolars for chewing/grinding, Canines for piercing/tearing, Incisors for cutting/biting.",
+          "correctAnswer": "Incisors (biting), Canines (tearing), Premolars/Molars (grinding/chewing).",
+          "marksObtained": 3,
+          "maxMarks": 3,
+          "feedback": "Well explained.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 16,
+          "topic": "Nutrition in Animals",
+          "question": "Explain about feeding & Digestion in Amoeba.",
+          "studentAnswer": "Amoeba uses pseudopodia for food... digestion occurs in food vacuoles.",
+          "correctAnswer": "Amoeba uses pseudopodia to engulf food; digestion happens in food vacuoles using enzymes.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Correct description of the process.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 17,
+          "topic": "Nutrition in Animals",
+          "question": "Draw a neat labelled diagram of human digestive system?",
+          "studentAnswer": "[Diagram provided with labels like Buccal cavity, Oesophagus, Stomach, Liver, etc.]",
+          "correctAnswer": "Labelled diagram including stomach, small intestine, large intestine, liver, pancreas.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Detailed diagram with proper labeling.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 18,
+          "topic": "Nutrition in Animals",
+          "question": "Case based: (i) Widest part of alimentary canal (ii) Substances released from stomach (iii) Function of acid.",
+          "studentAnswer": "(i) Stomach (ii) mucus, hydrochloric acid, digestive acid (iii) Acid kills bacteria, makes medium acidic.",
+          "correctAnswer": "(i) Stomach (ii) Mucus, HCl, digestive juices (iii) Kills bacteria and activates enzymes.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Correct answers based on the passage.",
+          "mistakeType": "None"
+        },
+        {
+          "id": 19,
+          "topic": "Nutrition in Plants",
+          "question": "Case based: (i) Define Nutrition (ii) Components of food (iii) Raw materials for photosynthesis.",
+          "studentAnswer": "(i) Mode of taking food... (ii) Carbohydrates, proteins, fats, vitamins, minerals (iii) Water, CO2, minerals.",
+          "correctAnswer": "(i) Mode of taking and utilizing food (ii) Nutrients (Carbs, Fats, etc.) (iii) Water, CO2, minerals.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Accurate extraction from text.",
+          "mistakeType": "None"
+        }
+      ],
+      "studentClass": "7th CBSE"
+    }
+  }
+]

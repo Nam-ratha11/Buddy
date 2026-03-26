@@ -1,7 +1,28 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+
+const T = {
+  pageBg: 'var(--page)', cardBg: 'var(--card)', zoneBg: 'var(--zone)',
+  green: 'var(--g)', gMid: 'var(--gMid)', gLight: 'var(--gLight)', gRing: 'var(--gRing)',
+  gGlow: 'var(--gGlow)', ink: 'var(--ink)', sub: 'var(--sub)',
+  hint: 'var(--hint)', line: 'var(--line)',
+  red: 'var(--red)', redBg: 'var(--redBg)', redLine: 'var(--redLine)',
+};
+
+const FONTS = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--page); font-family: 'DM Sans', sans-serif; }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
+    -webkit-text-fill-color: var(--ink) !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+`;
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,213 +32,238 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
-  useEffect(() => {
-    const user = localStorage.getItem('sprout_current_user');
-    if (user) router.replace('/');
-  }, [router]);
+
 
   const handleLogin = () => {
     setError('');
-    if (!name.trim() || !studentId.trim() || !password) {
-      setError('Please fill in all fields.');
-      return;
-    }
+    if (!name.trim()) { setError('Please enter your student name.'); return; }
+    if (!studentId.trim()) { setError('Please enter your student ID.'); return; }
+    if (!password) { setError('Please enter your password.'); return; }
     setLoading(true);
-    const users = JSON.parse(localStorage.getItem('sprout_users') || '[]');
-    const found = users.find(
-      u => u.studentId === studentId.trim() &&
-           u.name.toLowerCase() === name.trim().toLowerCase() &&
-           u.password === password
-    );
-    if (!found) {
-      setError('Incorrect details. Please check your name, ID, or password.');
+    try {
+      const users = JSON.parse(localStorage.getItem('sprout_users') || '[]');
+      const found = users.find(u =>
+        u.studentId === studentId.trim() &&
+        u.name.toLowerCase() === name.trim().toLowerCase() &&
+        u.password === password
+      );
+      if (!found) {
+        setError('Incorrect details. Please check your name, ID, or password.');
+        setLoading(false);
+        return;
+      }
+      localStorage.setItem('sprout_current_user', JSON.stringify(found));
+      router.replace('/analyze');
+    } catch (_) {
+      setError('Something went wrong. Please try again.');
       setLoading(false);
-      return;
     }
-    localStorage.setItem('sprout_current_user', JSON.stringify(found));
-    router.replace('/');
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') handleLogin();
-  };
-
-  const inputStyle = {
-    padding: '0.85rem 1rem',
-    borderRadius: 'var(--radius)',
-    border: '1.5px solid var(--border)',
-    background: 'var(--card)',
-    color: 'var(--foreground)',
-    fontSize: '1rem',
-    fontFamily: 'Inter, sans-serif',
+  const inputStyle = (field, extra = {}) => ({
+    width: '100%',
+    padding: '12px 14px',
+    borderRadius: 12,
+    border: `1.5px solid ${focusedField === field ? T.gMid : T.line}`,
+    background: T.cardBg,
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 15,
+    color: T.ink,
     outline: 'none',
-    transition: 'border-color 0.2s',
-    width: '100%'
-  };
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    boxShadow: focusedField === field ? `0 0 0 3px ${T.gLight}` : 'none',
+    ...extra,
+  });
+
+  const fields = [
+    { id: 'name',      label: 'Student Name', placeholder: 'Enter your full name',  value: name,      set: setName,      type: 'text' },
+    { id: 'studentId', label: 'Student ID',   placeholder: 'Enter your student ID', value: studentId, set: setStudentId, type: 'text' },
+  ];
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      padding: '1rem',
-      background: 'var(--background)'
-    }}>
-      <div className="glass card" style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '3rem 2.5rem',
-        maxWidth: '440px',
-        width: '100%',
-        gap: '1.75rem'
+    <>
+      <style dangerouslySetInnerHTML={{ __html: FONTS }} />
+      <div style={{
+        minHeight: '100vh', background: T.pageBg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '24px 16px',
       }}>
-        {/* Logo */}
-        <div style={{ textAlign: 'center' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.25rem' }}>
-            <span style={{ color: 'var(--primary)' }}>Sprout</span> AI
-          </h1>
-          <p style={{ opacity: 0.55, fontSize: '1rem' }}>Welcome back! Sign in to continue.</p>
-        </div>
+        <div style={{
+          background: T.cardBg, border: `1px solid ${T.line}`, borderRadius: 24,
+          boxShadow: '0 0 0 1px rgba(0,0,0,0.04), 0 4px 8px rgba(0,0,0,0.04), 0 24px 64px rgba(0,0,0,0.08)',
+          width: '100%', maxWidth: 420, overflow: 'hidden',
+        }}>
+          {/* Top accent stripe */}
+          <div style={{ height: 4, background: `linear-gradient(90deg, ${T.green}, #FCD34D, transparent)` }} />
 
-        {/* Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
-          {/* Hidden dummy inputs — trick Chrome into not targeting real fields */}
-          <input type="text" style={{ display: 'none' }} autoComplete="username" readOnly />
-          <input type="password" style={{ display: 'none' }} autoComplete="new-password" readOnly />
+          <div style={{ padding: '36px 36px 32px' }}>
+            {/* Logo */}
+            <div style={{ textAlign: 'center', marginBottom: 28 }}>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: 48, height: 48, borderRadius: 14, background: T.green,
+                boxShadow: `0 4px 14px ${T.gGlow}`, marginBottom: 14,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22C12 22 4 16 4 9a8 8 0 0 1 16 0c0 7-8 13-8 13z"/>
+                  <path d="M12 22V9"/>
+                </svg>
+              </div>
+              <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: T.ink, marginBottom: 4 }}>
+                Sprout<span style={{ color: T.green }}>AI</span>
+              </h1>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.hint }}>
+                Welcome back! Sign in to continue.
+              </p>
+            </div>
 
-          {/* Student Name */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>Student Name</label>
-            <input
-              type="text"
-              placeholder="Enter your full name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoComplete="off"
-              readOnly
-              style={inputStyle}
-              onFocus={e => { e.target.removeAttribute('readonly'); e.target.style.borderColor = 'var(--primary)'; }}
-              onBlur={e => e.target.style.borderColor = 'var(--border)'}
-            />
-          </div>
+            {/* Form */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Student ID */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>Student ID</label>
-            <input
-              type="text"
-              placeholder="Enter your student ID"
-              value={studentId}
-              onChange={e => setStudentId(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoComplete="off"
-              readOnly
-              style={inputStyle}
-              onFocus={e => { e.target.removeAttribute('readonly'); e.target.style.borderColor = 'var(--primary)'; }}
-              onBlur={e => e.target.style.borderColor = 'var(--border)'}
-            />
-          </div>
+              {/* Name + Student ID */}
+              {fields.map(({ id, label, placeholder, value, set, type }) => (
+                <div key={id}>
+                  <label style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600,
+                    fontSize: 12, color: T.sub, display: 'block', marginBottom: 6,
+                  }}>
+                    {label}
+                  </label>
+                  <input
+                    type={type}
+                    placeholder={placeholder}
+                    value={value}
+                    autoComplete={id === 'name' ? 'name' : 'username'}
+                    onChange={e => set(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                    onFocus={() => setFocusedField(id)}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle(id)}
+                  />
+                </div>
+              ))}
 
-          {/* Password */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <label style={{ fontSize: '0.85rem', fontWeight: 600, opacity: 0.7 }}>Password</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                onKeyDown={handleKeyDown}
-                style={{ ...inputStyle, paddingRight: '3rem' }}
-                onFocus={e => e.target.style.borderColor = 'var(--primary)'}
-                onBlur={e => e.target.style.borderColor = 'var(--border)'}
-              />
+              {/* Password */}
+              <div>
+                <label style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 600,
+                  fontSize: 12, color: T.sub, display: 'block', marginBottom: 6,
+                }}>
+                  Password
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Enter your password"
+                    value={password}
+                    autoComplete="current-password"
+                    onChange={e => setPassword(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    style={inputStyle('password', { paddingRight: 46 })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(v => !v)}
+                    style={{
+                      position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: T.hint, borderRadius: 6, transition: 'color 0.15s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = T.sub}
+                    onMouseLeave={e => e.currentTarget.style.color = T.hint}
+                  >
+                    {showPassword ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error */}
+              {error && (
+                <div style={{
+                  background: T.redBg, border: `1px solid ${T.redLine}`,
+                  borderRadius: 10, padding: '10px 14px',
+                  fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.red,
+                  display: 'flex', alignItems: 'center', gap: 8,
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  {error}
+                </div>
+              )}
+
+              {/* Submit */}
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={handleLogin}
+                disabled={loading}
                 style={{
-                  position: 'absolute',
-                  right: '0.85rem',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  opacity: 0.5,
-                  padding: 0,
-                  lineHeight: 1
+                  width: '100%', padding: '13px', borderRadius: 12, border: 'none',
+                  background: loading ? '#EFEFEB' : 'linear-gradient(135deg, #F59E0B, #D97706)',
+                  color: loading ? '#AAAA9E' : 'white',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 15,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  boxShadow: loading ? 'none' : `0 4px 14px ${T.gGlow}`,
+                  transition: 'all 0.2s ease', marginTop: 4,
                 }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.32)'; } }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = loading ? 'none' : `0 4px 14px ${T.gGlow}`; }}
               >
-                {showPassword ? '🙈' : '👁'}
+                {loading ? 'Signing in…' : 'Login →'}
               </button>
             </div>
-          </div>
 
-          {error && (
-            <p style={{
-              color: '#e53e3e',
-              fontSize: '0.85rem',
-              background: '#fff5f5',
-              border: '1px solid #fed7d7',
-              borderRadius: '0.5rem',
-              padding: '0.6rem 0.9rem',
-              margin: 0
-            }}>
-              {error}
-            </p>
-          )}
+            {/* Divider */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '22px 0' }}>
+              <div style={{ flex: 1, height: 1, background: T.line }} />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: T.hint }}>New to Sprout?</span>
+              <div style={{ flex: 1, height: 1, background: T.line }} />
+            </div>
 
-          <button
-            className="btn-primary"
-            onClick={handleLogin}
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '1rem',
-              fontSize: '1rem',
-              marginTop: '0.25rem',
-              opacity: loading ? 0.7 : 1,
-              cursor: loading ? 'not-allowed' : 'pointer'
+            {/* Register link */}
+            <Link href="/register" style={{
+              display: 'block', width: '100%', textAlign: 'center',
+              padding: '12px', borderRadius: 12,
+              border: `1.5px solid ${T.gRing}`, color: T.green,
+              fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 14,
+              textDecoration: 'none', transition: 'all 0.18s',
             }}
-          >
-            {loading ? 'Signing in...' : 'Login'}
-          </button>
-        </div>
+              onMouseEnter={e => { e.currentTarget.style.background = T.gLight; e.currentTarget.style.borderColor = T.green; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = T.gRing; }}
+            >
+              Create a new account
+            </Link>
 
-        {/* Divider */}
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-          <span style={{ fontSize: '0.8rem', opacity: 0.5, whiteSpace: 'nowrap' }}>New to Sprout?</span>
-          <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+            {/* Back to home */}
+            <div style={{ textAlign: 'center', marginTop: 16 }}>
+              <Link href="/" style={{
+                fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.hint,
+                textDecoration: 'none', transition: 'color 0.15s',
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = T.sub}
+                onMouseLeave={e => e.currentTarget.style.color = T.hint}
+              >
+                ← Back to home
+              </Link>
+            </div>
+          </div>
         </div>
-
-        {/* Register link */}
-        <Link href="/register" style={{
-          width: '100%',
-          display: 'block',
-          textAlign: 'center',
-          padding: '0.9rem',
-          borderRadius: 'var(--radius)',
-          border: '1.5px solid var(--primary)',
-          color: 'var(--primary)',
-          fontWeight: 600,
-          fontSize: '0.95rem',
-          textDecoration: 'none',
-          transition: 'background 0.2s',
-          fontFamily: 'Outfit, sans-serif'
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-light)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        >
-          Create a new account
-        </Link>
       </div>
-    </div>
+    </>
   );
 }

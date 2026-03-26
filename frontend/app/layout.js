@@ -4,7 +4,7 @@ export const metadata = {
   title: "Sprout AI | Feedback & Improvement Coach",
   description: "Transform corrected answer sheets into personalized learning journeys.",
   manifest: "/manifest.json",
-  themeColor: "#00b4ff",
+  themeColor: "#1E3A8A",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
   appleWebApp: {
     capable: true,

@@ -1,579 +1,497 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-// Mermaid rendering component
+const T = {
+  pageBg: 'var(--page)', cardBg: 'var(--card)', zoneBg: 'var(--zone)',
+  green: 'var(--g)', gMid: 'var(--gMid)', gLight: 'var(--gLight)', gRing: 'var(--gRing)',
+  gGlow: 'var(--gGlow)', ink: 'var(--ink)', sub: 'var(--sub)',
+  hint: 'var(--hint)', line: 'var(--line)', lineHi: 'var(--lineHi)',
+  amber: 'var(--amber)', amberBg: 'var(--amberBg)', amberLine: 'var(--amberLine)',
+};
+const cardShadow = '0 0 0 1px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.07)';
+
 function MermaidDiagram({ chart }) {
-    const containerRef = useRef(null);
-    const [svg, setSvg] = useState('');
-    const [error, setError] = useState(false);
+  const [svg, setSvg] = useState('');
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!chart) return;
-        let cancelled = false;
+  useEffect(() => {
+    if (!chart) {
+      setLoading(false);
+      return;
+    }
+    
+    let cancelled = false;
+    setLoading(true);
+    
+    (async () => {
+      try {
+        const mermaid = (await import('mermaid')).default;
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'base',
+          themeVariables: {
+            primaryColor: '#EFF6FF',
+            primaryBorderColor: '#BFDBFE',
+            primaryTextColor: '#0F172A',
+            lineColor: '#2563EB',
+            fontFamily: 'DM Sans, sans-serif',
+            fontSize: '14px'
+          },
+          flowchart: { curve: 'basis', padding: 15 }
+        });
+        
+        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        const { svg: rendered } = await mermaid.render(id, chart);
+        
+        if (!cancelled) {
+          setSvg(rendered);
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error('Mermaid render error:', e);
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      }
+    })();
+    
+    return () => { cancelled = true; };
+  }, [chart]);
 
-        (async () => {
-            try {
-                const mermaid = (await import('mermaid')).default;
-                mermaid.initialize({
-                    startOnLoad: false,
-                    theme: 'base',
-                    themeVariables: {
-                        primaryColor: '#e0f5ff',
-                        primaryBorderColor: '#38bdf8',
-                        primaryTextColor: '#0f1729',
-                        lineColor: '#818cf8',
-                        secondaryColor: '#f0e6ff',
-                        tertiaryColor: '#f8fafc',
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: '14px'
-                    },
-                    flowchart: { curve: 'basis', padding: 15 }
-                });
-                const id = `mermaid-${Date.now()}`;
-                const { svg: rendered } = await mermaid.render(id, chart);
-                if (!cancelled) setSvg(rendered);
-            } catch (e) {
-                console.error('Mermaid render error:', e);
-                if (!cancelled) setError(true);
-            }
-        })();
-
-        return () => { cancelled = true; };
-    }, [chart]);
-
-    if (error || !chart) return null;
-    if (!svg) return <p style={{ opacity: 0.5, fontSize: '0.85rem' }}>Rendering diagram...</p>;
-
+  if (!chart) return null;
+  if (error) {
     return (
-        <div
-            ref={containerRef}
-            style={{
-                padding: '1.5rem', borderRadius: '12px',
-                background: 'white', border: '1px solid var(--border)',
-                display: 'flex', justifyContent: 'center', overflow: 'auto',
-                marginTop: '1rem',
-                marginBottom: '1rem'
-            }}
-            dangerouslySetInnerHTML={{ __html: svg }}
-        />
+      <div style={{
+        padding: '16px',
+        borderRadius: 12,
+        background: T.amberBg,
+        border: `1px solid ${T.amberLine}`,
+        margin: '12px 0'
+      }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.amber, margin: 0 }}>
+          ⚠️ Could not render diagram
+        </p>
+      </div>
     );
+  }
+  
+  if (loading || !svg) {
+    return (
+      <div style={{
+        padding: '20px',
+        borderRadius: 12,
+        background: T.zoneBg,
+        border: `1px solid ${T.line}`,
+        margin: '12px 0',
+        textAlign: 'center'
+      }}>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.hint, margin: 0 }}>
+          Rendering diagram…
+        </p>
+      </div>
+    );
+  }
+  
+  return (
+    <div style={{
+      padding: '20px',
+      borderRadius: 12,
+      background: T.cardBg,
+      border: `1px solid ${T.line}`,
+      display: 'flex',
+      justifyContent: 'center',
+      overflow: 'auto',
+      margin: '12px 0'
+    }}
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
 }
 
 export default function RemediationAgent({ evaluation, history = [], studentClass, syllabusTopics }) {
-    const [gapProgress, setGapProgress] = useState({});
-    const [messages, setMessages] = useState([]);
-    const [isTyping, setIsTyping] = useState(false);
-    
-    // Track states of MCQs inside chat
-    const [mcqAnswers, setMcqAnswers] = useState({}); // { messageId: selectedOptionIndex }
+  const [gapProgress, setGapProgress] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [activeTopic, setActiveTopic] = useState(null);
+  const [profile, setProfile] = useState({ weakTopics: {} });
+  const [mcqAnswers, setMcqAnswers] = useState({});
+  const scrollRef = useRef(null);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
-    const scrollRef = useRef(null);
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  const getStorageKey = () => {
+    try { const user = JSON.parse(localStorage.getItem('sprout_current_user') || '{}'); return `sprout_gap_progress_${user.studentId || 'default'}`; }
+    catch { return 'sprout_gap_progress_default'; }
+  };
 
-    // Per-user localStorage key for gap progress
-    const getStorageKey = () => {
-        try {
-            const user = JSON.parse(localStorage.getItem('sprout_current_user') || '{}');
-            return `sprout_gap_progress_${user.studentId || 'default'}`;
-        } catch { return 'sprout_gap_progress_default'; }
-    };
+  useEffect(() => {
+    const saved = localStorage.getItem(getStorageKey());
+    if (saved) { try { setGapProgress(JSON.parse(saved)); } catch { } }
+    fetchProfile();
+  }, []);
 
-    // Load gap progress from localStorage (per-user)
-    useEffect(() => {
-        const saved = localStorage.getItem(getStorageKey());
-        if (saved) {
-            try { setGapProgress(JSON.parse(saved)); } catch { }
-        }
-    }, []);
+  const fetchProfile = async () => {
+    try { const res = await fetch(`${API_URL}/api/profile`); const data = await res.json(); if (data.weakTopics) setProfile(data); }
+    catch (e) { console.error("Failed to fetch profile:", e); }
+  };
 
-    const updateGapProgress = (topic, status) => {
-        const updated = { ...gapProgress, [topic]: status };
-        setGapProgress(updated);
-        localStorage.setItem(getStorageKey(), JSON.stringify(updated));
-    };
+  const updateGapProgress = (topic, status) => {
+    const updated = { ...gapProgress, [topic]: status };
+    setGapProgress(updated);
+    localStorage.setItem(getStorageKey(), JSON.stringify(updated));
+  };
 
-    // Auto-scroll to bottom on new messages
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    }, [messages, isTyping]);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, isTyping]);
 
-    // Aggregate all evaluated questions to find weak topics
-    let allQuestions = [];
-    if (evaluation && evaluation.questions) {
-        allQuestions = evaluation.questions;
-    } else if (history.length > 0) {
-        allQuestions = history.reduce((acc, item) => {
-            if (item.data && item.data.questions) return acc.concat(item.data.questions);
-            return acc;
-        }, []);
-    }
+  let allQuestions = [];
+  if (evaluation && evaluation.questions) allQuestions = evaluation.questions;
+  else if (history.length > 0) allQuestions = history.reduce((acc, item) => { if (item.data && item.data.questions) return acc.concat(item.data.questions); return acc; }, []);
 
-    const topicScores = {};
-    allQuestions.forEach(q => {
-        if (!topicScores[q.topic]) {
-            topicScores[q.topic] = { subject: q.subject, total: 0, obtained: 0, mistakeType: null, feedback: null };
-        }
-        topicScores[q.topic].total += q.maxMarks;
-        topicScores[q.topic].obtained += q.marksObtained;
-        if (q.marksObtained < q.maxMarks) {
-            topicScores[q.topic].mistakeType = q.mistakeType;
-            topicScores[q.topic].feedback = q.feedback;
-        }
-    });
+  const topicScores = {};
+  allQuestions.forEach(q => {
+    if (!topicScores[q.topic]) topicScores[q.topic] = { subject: q.subject, total: 0, obtained: 0, mistakeType: null, feedback: null };
+    topicScores[q.topic].total += q.maxMarks;
+    topicScores[q.topic].obtained += q.marksObtained;
+    if (q.marksObtained < q.maxMarks) { topicScores[q.topic].mistakeType = q.mistakeType; topicScores[q.topic].feedback = q.feedback; }
+  });
 
-    const buildWeakTopics = () => {
-        let weak = [];
-        if (syllabusTopics) {
-            Object.entries(syllabusTopics).forEach(([subject, topics]) => {
-                topics.forEach(topic => {
-                    const score = topicScores[topic];
-                    if (score) {
-                        const pct = (score.obtained / score.total) * 100;
-                        if (pct < 75) {
-                            weak.push({
-                                topic, 
-                                subject,
-                                mistakeType: score.mistakeType,
-                                feedback: score.feedback,
-                                status: gapProgress[topic] || 'weak'
-                            });
-                        }
-                    }
-                });
-            });
-        }
-        return weak;
-    };
-
-    const weakTopics = buildWeakTopics();
-
-    // Initialize Chat
-    useEffect(() => {
-        if (weakTopics.length > 0 && messages.length === 0) {
-            const unresolvedTopics = weakTopics.filter(t => t.status !== 'resolved');
-            
-            if (unresolvedTopics.length > 0) {
-                setMessages([
-                    {
-                        id: Date.now().toString(),
-                        role: 'bot',
-                        type: 'text',
-                        content: `Hi! I'm your AI Improvement Coach. Based on your recent performance, I've identified a few specific areas where we can improve to boost your score. What would you like to review first?`
-                    },
-                    {
-                        id: (Date.now() + 1).toString(),
-                        role: 'bot',
-                        type: 'options',
-                        options: unresolvedTopics.map(t => ({
-                            label: t.topic,
-                            action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback)
-                        }))
-                    }
-                ]);
-            } else {
-                 setMessages([
-                    {
-                        id: Date.now().toString(),
-                        role: 'bot',
-                        type: 'text',
-                        content: `Hi! I'm your AI Improvement Coach. Great job! It looks like you have resolved all your weak topics for now.`
-                    }
-                ]);
-            }
-        } else if (weakTopics.length === 0 && messages.length === 0) {
-            setMessages([
-                {
-                    id: Date.now().toString(),
-                    role: 'bot',
-                    type: 'text',
-                    content: `Hi there! I don't have enough data from your tests to find any weak topics yet. Keep practicing!`
-                }
-            ]);
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [weakTopics.length]); // Intentionally omitting messages to avoid loops
-
-    const generateOptionsMessage = () => {
-         const unresolvedTopics = buildWeakTopics().filter(t => t.status !== 'resolved');
-         if (unresolvedTopics.length > 0) {
-               return {
-                    id: Date.now().toString(),
-                    role: 'bot',
-                    type: 'options',
-                    content: 'Which topic would you like to tackle next?',
-                    options: unresolvedTopics.map(t => ({
-                        label: t.topic,
-                        action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback)
-                    }))
-                };
-         } else {
-              return {
-                 id: Date.now().toString(),
-                 role: 'bot',
-                 type: 'text',
-                 content: 'Amazing! You have resolved all the weak gaps I found.'
-              };
-         }
-    };
-
-    const handleTopicSelect = async (topic, mistakeType, feedback) => {
-        // Find existing unresolved topic list and replace it so buttons disappear
-        setMessages(prev => {
-            const newMsgs = [...prev];
-            const lastMsg = newMsgs[newMsgs.length - 1];
-            if (lastMsg.type === 'options') {
-                 newMsgs.pop(); 
-            }
-            return [
-                ...newMsgs,
-                { id: Date.now().toString(), role: 'user', type: 'text', content: `I want to review ${topic}` }
-            ];
+  const buildWeakTopics = () => {
+    let weak = [];
+    if (syllabusTopics) {
+      Object.entries(syllabusTopics).forEach(([subject, topics]) => {
+        topics.forEach(topic => {
+          const score = topicScores[topic];
+          if (score) { const pct = (score.obtained / score.total) * 100; if (pct < 75) weak.push({ topic, subject, mistakeType: score.mistakeType, feedback: score.feedback, status: gapProgress[topic] || 'weak' }); }
         });
+      });
+    }
+    Object.values(profile.weakTopics).forEach(pt => {
+      const exists = weak.find(w => w.topic.toLowerCase() === pt.name.toLowerCase());
+      if (!exists) weak.push({ topic: pt.name, subject: pt.subject, mistakeType: pt.mistakeType, feedback: pt.feedback, status: pt.status.toLowerCase().replace(' ', '_'), isFromMemory: true });
+      else exists.status = pt.status.toLowerCase().replace(' ', '_');
+    });
+    return weak;
+  };
 
-        setIsTyping(true);
-        updateGapProgress(topic, 'in_progress');
+  const weakTopics = buildWeakTopics();
 
-        try {
-            const response = await fetch(`${API_URL}/api/remediate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic, grade: studentClass, mistakeType, feedback }),
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error);
-            
-            setMessages(prev => [
-                ...prev,
-                { id: (Date.now() + 1).toString(), role: 'bot', type: 'explanation', data: data },
-                generateOptionsMessage()
-            ]);
-            
-        } catch (error) {
-            console.error("Remediation failed:", error);
-            setMessages(prev => [
-                ...prev,
-                { id: Date.now().toString(), role: 'bot', type: 'text', content: "Sorry, I had trouble generating that lesson. Let's try another topic." }
-            ]);
-        } finally {
-            setIsTyping(false);
+  useEffect(() => {
+    if (weakTopics.length > 0 && messages.length === 0) {
+      const unresolved = weakTopics.filter(t => t.status !== 'resolved');
+      if (unresolved.length > 0) {
+        setMessages([
+          { id: Date.now().toString(), role: 'bot', type: 'text', content: `Hi! I'm your AI Improvement Coach. Based on your recent performance, I've identified a few specific areas where we can improve to boost your score. What would you like to review first?` },
+          { id: (Date.now() + 1).toString(), role: 'bot', type: 'options', options: unresolved.map(t => ({ label: t.topic, action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback) })) }
+        ]);
+      } else {
+        setMessages([{ id: Date.now().toString(), role: 'bot', type: 'text', content: `Hi! I'm your AI Improvement Coach. Great job! It looks like you have resolved all your weak topics for now.` }]);
+      }
+    } else if (weakTopics.length === 0 && messages.length === 0) {
+      setMessages([{ id: Date.now().toString(), role: 'bot', type: 'text', content: `Hi! I'm your AI Improvement Coach. I haven't found any weak topics from your tests yet, but you can still ask me to explain any topic you'd like to learn about!` }]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weakTopics.length]);
+
+  const generateOptionsMessage = () => {
+    const unresolved = buildWeakTopics().filter(t => t.status !== 'resolved');
+    if (unresolved.length > 0) return { id: Date.now().toString(), role: 'bot', type: 'options', content: 'Which topic would you like to tackle next?', options: unresolved.map(t => ({ label: t.topic, action: () => handleTopicSelect(t.topic, t.mistakeType, t.feedback) })) };
+    return { id: Date.now().toString(), role: 'bot', type: 'text', content: 'Amazing! You have resolved all the weak gaps I found.' };
+  };
+
+  const handleTopicSelect = async (topic, mistakeType, feedback) => {
+    setActiveTopic(topic);
+    setMessages(prev => { const newMsgs = [...prev]; const last = newMsgs[newMsgs.length - 1]; if (last.type === 'options') newMsgs.pop(); return [...newMsgs, { id: Date.now().toString(), role: 'user', type: 'text', content: `I want to review ${topic}` }]; });
+    setIsTyping(true);
+    updateGapProgress(topic, 'in_progress');
+    try {
+      console.log('[RemediationAgent] Requesting remediation for:', topic);
+      const response = await fetch(`${API_URL}/api/remediate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, grade: studentClass, mistakeType, feedback }) });
+      const data = await response.json();
+      console.log('[RemediationAgent] Received data:', data);
+      console.log('[RemediationAgent] Has conceptMap?', !!data.conceptMap);
+      console.log('[RemediationAgent] Has youtubeSearchQuery?', !!data.youtubeSearchQuery);
+      if (data.error) throw new Error(data.error);
+      setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', type: 'explanation', data }, { id: (Date.now() + 2).toString(), role: 'bot', type: 'text', content: `I've prepared a detailed lesson on ${topic} for you. Feel free to ask me any questions about it below!` }]);
+    } catch (error) {
+      console.error('[RemediationAgent] Error:', error);
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'bot', type: 'text', content: "Sorry, I had trouble generating that lesson. Let's try another topic." }]);
+    } finally { setIsTyping(false); }
+  };
+
+  const handleSendMessage = async (e) => {
+    if (e) e.preventDefault();
+    if (!inputValue.trim() || isTyping) return;
+    const userMsg = inputValue.trim();
+    setInputValue('');
+    setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', type: 'text', content: userMsg }]);
+    setIsTyping(true);
+    try {
+      let contextualHistory = [];
+      messages.forEach(m => {
+        if (m.type === 'text') contextualHistory.push({ role: m.role, content: m.content });
+        else if (m.type === 'explanation' && m.data) {
+          const d = m.data;
+          let s = `[SYSTEM CONTEXT: You previously taught a lesson on "${d.topic}". `;
+          if (d.hook) s += `The hook was: ${d.hook.title}. `;
+          if (d.chapterExplanation) s += `Overview: ${d.chapterExplanation.overview}. `;
+          if (d.chapterExplanation?.keyConcepts) s += `Key Concepts: ${d.chapterExplanation.keyConcepts.map(kc => kc.heading).join(', ')}. `;
+          if (d.proTips) s += `Pro Tips: ${d.proTips.join('; ')}. `;
+          s += `]`;
+          contextualHistory.push({ role: 'assistant', content: s });
         }
-    };
+      });
+      const response = await fetch(`${API_URL}/api/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userMsg, history: contextualHistory, grade: studentClass, topic: activeTopic || 'General' }) });
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      
+      // Handle both text and explanation responses
+      if (data.type === 'explanation' && data.data) {
+        console.log('[RemediationAgent] Received explanation from chat');
+        console.log('[RemediationAgent] Has conceptMap?', !!data.data.conceptMap);
+        console.log('[RemediationAgent] Has youtubeSearchQuery?', !!data.data.youtubeSearchQuery);
+        setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', type: 'explanation', data: data.data }]);
+        // Update active topic if we got a new explanation
+        if (data.data.topic) setActiveTopic(data.data.topic);
+      } else {
+        // Regular text response
+        setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'bot', type: 'text', content: data.content }]);
+      }
+    } catch (error) {
+      console.error('[RemediationAgent] Chat error:', error);
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'bot', type: 'text', content: "I'm having a bit of trouble connecting right now. Could you try asking that again?" }]);
+    } finally { setIsTyping(false); }
+  };
 
-    const handleMcqSubmit = (messageId, optionIndex, correctOption, topic) => {
-        setMcqAnswers(prev => ({ ...prev, [messageId]: optionIndex }));
-        if (optionIndex === correctOption) {
-            updateGapProgress(topic, 'resolved');
-        }
-    };
+  const handleMcqSubmit = (messageId, optionIndex, correctOption, topic) => {
+    setMcqAnswers(prev => ({ ...prev, [messageId]: optionIndex }));
+    if (optionIndex === correctOption) updateGapProgress(topic, 'resolved');
+  };
 
-    const handleWatchVideo = (topic) => {
-        const query = encodeURIComponent(`${studentClass} CBSE ${topic} NCERT explained`);
-        window.open(`https://www.youtube.com/results?search_query=${query}`, '_blank');
-    };
+  const handleWatchVideo = (topic, youtubeQuery) => {
+    const searchQuery = youtubeQuery || `${studentClass} CBSE ${topic} NCERT explained`;
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`, '_blank');
+  };
 
-    // --- RENDER HELPERS ---
+  // ── Render helpers ──
+  const renderText = (msg) => (
+    <div style={{
+      padding: '12px 16px', maxWidth: '85%', lineHeight: 1.6, fontSize: 14,
+      borderRadius: msg.role === 'user' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+      background: msg.role === 'user' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : T.cardBg,
+      color: msg.role === 'user' ? 'white' : T.ink,
+      border: msg.role === 'bot' ? `1px solid ${T.line}` : 'none',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+      fontFamily: "'DM Sans', sans-serif",
+    }}>{msg.content}</div>
+  );
 
-    const renderText = (msg) => (
-        <div style={{
-            padding: '1rem 1.25rem',
-            borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-            background: msg.role === 'user' ? 'var(--primary)' : 'var(--card)',
-            color: msg.role === 'user' ? 'white' : 'var(--foreground)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            border: msg.role === 'bot' ? '1px solid var(--border)' : 'none',
-            maxWidth: '85%',
-            lineHeight: '1.5',
-            fontSize: '0.95rem'
-        }}>
-           {msg.content}
-        </div>
-    );
+  const renderOptions = (msg) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: '85%' }}>
+      {msg.content && (
+        <div style={{ padding: '12px 16px', borderRadius: '18px 18px 18px 4px', background: T.cardBg, border: `1px solid ${T.line}`, fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.ink, marginBottom: 4 }}>{msg.content}</div>
+      )}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {msg.options.map((opt, i) => (
+          <button key={i} onClick={opt.action} style={{
+            padding: '8px 16px', borderRadius: 99,
+            background: T.cardBg, border: `1.5px solid ${T.gRing}`, color: T.green,
+            fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13,
+            cursor: 'pointer', transition: 'all 0.18s',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = T.gLight; }}
+            onMouseLeave={e => { e.currentTarget.style.background = T.cardBg; }}
+          >{opt.label}</button>
+        ))}
+      </div>
+    </div>
+  );
 
-    const renderOptions = (msg) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: '85%' }}>
-            {msg.content && (
-                 <div style={{
-                    padding: '1rem 1.25rem',
-                    borderRadius: '20px 20px 20px 4px',
-                    background: 'var(--card)',
-                    border: '1px solid var(--border)',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                    fontSize: '0.95rem',
-                    marginBottom: '0.5rem'
-                }}>
-                    {msg.content}
-                </div>
-            )}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {msg.options.map((opt, i) => (
-                    <button
-                        key={i}
-                        onClick={opt.action}
-                        style={{
-                            padding: '0.75rem 1.25rem',
-                            borderRadius: '20px',
-                            background: 'white',
-                            border: '1px solid var(--primary)',
-                            color: 'var(--primary)',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-                        }}
-                        onMouseEnter={e => { e.target.style.background = 'var(--primary)'; e.target.style.color = 'white'; }}
-                        onMouseLeave={e => { e.target.style.background = 'white'; e.target.style.color = 'var(--primary)'; }}
-                    >
-                        {opt.label}
-                    </button>
-                ))}
-            </div>
-        </div>
-    );
-
-    const renderExplanation = (msg) => {
-        const d = msg.data;
-        if (!d) return null;
-
-        const isMcqSubmitted = mcqAnswers[msg.id] !== undefined;
-        const userAnswer = mcqAnswers[msg.id];
-
-        return (
-            <div style={{
-                borderRadius: '20px 20px 20px 4px',
-                background: 'var(--card)', border: '1px solid var(--border)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                maxWidth: '90%', padding: '1.5rem',
-                animation: 'fadeIn 0.4s ease'
-            }}>
-                <h3 style={{ marginTop: 0, color: 'var(--primary)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
-                    {d.topic}
-                </h3>
-
-                {/* The Hook */}
-                {d.hook && (
-                    <div style={{ marginBottom: '1.5rem', background: 'var(--primary-light)', padding: '1rem', borderRadius: '12px' }}>
-                        <p style={{ fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--primary)' }}>💡 {d.hook.title}</p>
-                        <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: '1.6' }}>{d.hook.explanation}</p>
-                    </div>
-                )}
-
-                {/* Chapter Overview */}
-                {d.chapterExplanation && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <p style={{ lineHeight: '1.6', fontSize: '0.95rem' }}>{d.chapterExplanation.overview}</p>
-                        
-                        {d.chapterExplanation.keyConcepts?.length > 0 && (
-                            <div style={{ marginTop: '1rem' }}>
-                                <strong style={{ color: 'var(--secondary)' }}>Key Concepts:</strong>
-                                <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.6' }}>
-                                    {d.chapterExplanation.keyConcepts.map((kc, i) => (
-                                        <li key={i}><strong>{kc.heading}:</strong> {kc.explanation}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                        
-                        {d.chapterExplanation.importantTerms?.length > 0 && (
-                            <div style={{ marginTop: '1rem', background: 'hsla(230, 100%, 67%, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid hsla(230, 100%, 67%, 0.1)' }}>
-                                <strong style={{ color: 'var(--secondary)' }}>Important Terms:</strong>
-                                <div style={{ display: 'grid', gap: '0.5rem', marginTop: '0.5rem' }}>
-                                    {d.chapterExplanation.importantTerms.map((term, i) => (
-                                        <div key={i} style={{ fontSize: '0.9rem' }}>
-                                            <span style={{ fontWeight: 600 }}>{term.term}:</span> {term.definition}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Diagram */}
-                {d.conceptMap && (
-                    <MermaidDiagram chart={d.conceptMap} />
-                )}
-
-                {/* Common Mistakes */}
-                {d.commonMistakes?.length > 0 && (
-                    <div style={{ marginBottom: '1.5rem', background: 'hsla(0, 72%, 51%, 0.05)', padding: '1rem', borderRadius: '12px', border: '1px solid hsla(0, 72%, 51%, 0.1)' }}>
-                        <strong style={{ color: 'hsl(0, 72%, 41%)' }}>⚠️ Common Mistakes:</strong>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                            {d.commonMistakes.map((cm, i) => (
-                                <li key={i} style={{ marginBottom: '0.5rem' }}>
-                                    <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>{cm.mistake}</span><br/>
-                                    <strong style={{ color: 'hsl(145, 63%, 32%)' }}>Correct:</strong> {cm.correction}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-                
-                {d.proTips?.length > 0 && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                        <strong style={{ color: 'var(--accent)' }}>⭐ Pro Tips:</strong>
-                        <ul style={{ paddingLeft: '1.5rem', marginTop: '0.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
-                            {d.proTips.map((tip, i) => (
-                                <li key={i}>{tip}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* MCQ Question Module embedded in the explanation */}
-                {d.mcq && (
-                     <div style={{ marginTop: '2rem', padding: '1.25rem', background: 'var(--background)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                        <p style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1rem' }}>
-                            Let's check your understanding: <br />
-                            <span style={{ fontWeight: 500, opacity: 0.8, fontSize: '0.95rem' }}>{d.mcq.question}</span>
-                        </p>
-                        <div style={{ display: 'grid', gap: '0.5rem' }}>
-                            {d.mcq.options.map((option, i) => {
-                                let bg = 'transparent';
-                                let borderColor = 'var(--border)';
-                                let fontW = 500;
-                                
-                                if (isMcqSubmitted) {
-                                    if (i === d.mcq.correctOption) {
-                                        bg = 'hsla(145, 63%, 42%, 0.12)';
-                                        borderColor = 'hsl(145, 63%, 42%)';
-                                        fontW = 700;
-                                    } else if (i === userAnswer && i !== d.mcq.correctOption) {
-                                        bg = 'hsla(0, 72%, 51%, 0.12)';
-                                        borderColor = 'hsl(0, 72%, 51%)';
-                                    }
-                                }
-                                return (
-                                    <button
-                                        key={i}
-                                        onClick={() => !isMcqSubmitted && handleMcqSubmit(msg.id, i, d.mcq.correctOption, d.topic)}
-                                        disabled={isMcqSubmitted}
-                                        style={{
-                                            padding: '0.75rem 1rem', borderRadius: '10px',
-                                            border: `2px solid ${borderColor}`, background: bg,
-                                            cursor: isMcqSubmitted ? 'default' : 'pointer',
-                                            textAlign: 'left', fontSize: '0.9rem',
-                                            fontWeight: fontW, transition: 'all 0.2s',
-                                            color: 'var(--foreground)'
-                                        }}
-                                    >
-                                        <span style={{ fontWeight: 700, marginRight: '0.5rem', opacity: 0.5 }}>
-                                            {String.fromCharCode(65 + i)}.
-                                        </span>
-                                        {option}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        {isMcqSubmitted && (
-                            <div style={{
-                                marginTop: '1rem', padding: '1rem', borderRadius: '10px',
-                                background: userAnswer === d.mcq.correctOption
-                                    ? 'hsla(145, 63%, 42%, 0.08)' : 'hsla(0, 72%, 51%, 0.08)',
-                                fontSize: '0.9rem', fontWeight: 600,
-                                color: userAnswer === d.mcq.correctOption
-                                    ? 'hsl(145, 63%, 32%)' : 'hsl(0, 72%, 41%)'
-                            }}>
-                                {userAnswer === d.mcq.correctOption
-                                    ? 'Correct! This gap has been marked as resolved.'
-                                    : `Incorrect. The correct answer is ${String.fromCharCode(65 + d.mcq.correctOption)}. Review the explanation and try watching the video.`
-                                }
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                 {/* Video CTA */}
-                 <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
-                     <button
-                        onClick={() => handleWatchVideo(d.topic)}
-                        style={{
-                            padding: '0.75rem 1.5rem', borderRadius: '25px',
-                            background: 'transparent', border: '1px solid var(--border)',
-                            color: 'var(--foreground)', cursor: 'pointer', fontWeight: 600,
-                            fontSize: '0.85rem'
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--primary)'}
-                        onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
-                    >
-                        🎥 Search YouTube for this Topic
-                    </button>
-                 </div>
-            </div>
-        );
-    };
+  const renderExplanation = (msg) => {
+    const d = msg.data;
+    if (!d) return null;
+    const isMcqSubmitted = mcqAnswers[msg.id] !== undefined;
+    const userAnswer = mcqAnswers[msg.id];
 
     return (
-        <div style={{ height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', animation: 'fadeIn 0.5s ease' }}>
-             <div style={{ marginBottom: '1rem', flexShrink: 0 }}>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '1.8rem' }}>🤖</span> AI Improvement Coach
-                </h2>
-                <p style={{ opacity: 0.6, fontSize: '0.9rem' }}>Chat with me to fix your knowledge gaps</p>
-            </div>
+      <div style={{ borderRadius: '18px 18px 18px 4px', background: T.cardBg, border: `1px solid ${T.line}`, boxShadow: cardShadow, maxWidth: '92%', overflow: 'hidden', animation: 'sp-fadein 0.4s ease' }}>
+        <div style={{ height: 3, background: `linear-gradient(90deg, ${T.green}, #FCD34D, transparent)` }} />
+        <div style={{ padding: '20px 22px' }}>
+          <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 16, color: T.green, borderBottom: `1px solid ${T.gRing}`, paddingBottom: 10, marginBottom: 18, marginTop: 0 }}>{d.topic}</h3>
 
-            <div 
-                ref={scrollRef}
-                style={{ 
-                    flex: '1', 
-                    background: 'hsla(0,0%,100%,0.5)', 
-                    borderRadius: '16px', 
-                    border: '1px solid var(--border)',
-                    overflowY: 'auto',
-                    padding: '2rem 1.5rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1.5rem'
-                }}
-            >
-                {messages.map((msg) => (
-                    <div key={msg.id} style={{
-                        display: 'flex',
-                        justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                        alignItems: 'flex-end',
-                        gap: '0.5rem'
-                    }}>
-                        {msg.role === 'bot' && (
-                             <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
-                                 🤖
-                             </div>
-                        )}
-                        {msg.type === 'text' && renderText(msg)}
-                        {msg.type === 'options' && renderOptions(msg)}
-                        {msg.type === 'explanation' && renderExplanation(msg)}
-                    </div>
+          {d.hook && (
+            <div style={{ marginBottom: 16, background: T.gLight, padding: '12px 14px', borderRadius: 12, border: `1px solid ${T.gRing}` }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 12, color: T.green, marginBottom: 4 }}>💡 {d.hook.title}</p>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, lineHeight: 1.65, color: T.ink, margin: 0 }}>{d.hook.explanation}</p>
+            </div>
+          )}
+
+          {d.chapterExplanation?.overview && (
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, lineHeight: 1.75, color: T.ink, marginBottom: 16 }}>{d.chapterExplanation.overview}</p>
+          )}
+
+          {d.chapterExplanation?.keyConcepts?.length > 0 && (
+            <div style={{ marginBottom: 18 }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 10, color: T.hint, textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: 10 }}>Key Concepts</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {d.chapterExplanation.keyConcepts.map((kc, i) => (
+                  <div key={i} style={{ padding: '12px 14px', borderRadius: 12, background: T.zoneBg, border: `1px solid ${T.line}` }}>
+                    <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.gMid, marginBottom: 4 }}>{kc.heading}</p>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, lineHeight: 1.65, color: T.ink, marginBottom: kc.example ? 8 : 0 }}>{kc.explanation}</p>
+                    {kc.example && <div style={{ padding: '8px 10px', borderRadius: 8, background: T.cardBg, borderLeft: `3px solid ${T.gRing}`, fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontStyle: 'italic', color: T.sub }}>📌 {kc.example}</div>}
+                  </div>
                 ))}
-                
-                {isTyping && (
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', flexShrink: 0 }}>
-                            🤖
-                        </div>
-                        <div style={{
-                            padding: '1rem', borderRadius: '20px 20px 20px 4px',
-                            background: 'var(--card)', border: '1px solid var(--border)',
-                            display: 'flex', gap: '4px', alignItems: 'center'
-                        }}>
-                            <div className="typing-dot" />
-                            <div className="typing-dot" style={{ animationDelay: '0.2s' }} />
-                            <div className="typing-dot" style={{ animationDelay: '0.4s' }} />
-                        </div>
-                    </div>
-                )}
+              </div>
             </div>
+          )}
 
-             <style jsx>{`
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                .typing-dot {
-                    width: 6px; height: 6px; background: var(--primary); borderRadius: 50%;
-                    animation: bounce 1.4s infinite ease-in-out both;
-                }
-                @keyframes bounce {
-                    0%, 80%, 100% { transform: scale(0); }
-                    40% { transform: scale(1); }
-                }
-            `}</style>
+          {d.chapterExplanation?.importantTerms?.length > 0 && (
+            <div style={{ marginBottom: 18, background: T.gLight, padding: '12px 14px', borderRadius: 12, border: `1px solid ${T.gRing}` }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 10, color: T.green, textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: 10 }}>Important Terms</p>
+              <div style={{ display: 'grid', gap: 6 }}>
+                {d.chapterExplanation.importantTerms.map((term, i) => (
+                  <div key={i} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, lineHeight: 1.6, color: T.ink }}>
+                    <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700 }}>{term.term}: </span>{term.definition}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {d.conceptMap && <MermaidDiagram chart={d.conceptMap} />}
+
+          {d.commonMistakes?.length > 0 && (
+            <div style={{ marginBottom: 18 }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 10, color: '#DC2626', textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: 10 }}>⚠️ Common Mistakes</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {d.commonMistakes.map((cm, i) => (
+                  <div key={i} style={{ padding: '12px 14px', borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA' }}>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, textDecoration: 'line-through', color: '#9CA3AF', marginBottom: 4 }}>✗ {cm.mistake}</p>
+                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.green, fontWeight: 600, marginBottom: cm.example ? 4 : 0 }}>✓ {cm.correction}</p>
+                    {cm.example && <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: T.sub, fontStyle: 'italic', lineHeight: 1.5, margin: 0 }}>{cm.example}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {d.proTips?.length > 0 && (
+            <div style={{ marginBottom: 18, padding: '12px 14px', borderRadius: 12, background: T.amberBg, border: `1px solid ${T.amberLine}` }}>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 10, color: T.amber, textTransform: 'uppercase', letterSpacing: '0.7px', marginBottom: 8 }}>⭐ Pro Tips</p>
+              <ul style={{ paddingLeft: '1.1rem', margin: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {d.proTips.map((tip, i) => <li key={i} style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, lineHeight: 1.6, color: T.amber }}>{tip}</li>)}
+              </ul>
+            </div>
+          )}
+
+
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={() => handleWatchVideo(d.topic, d.youtubeSearchQuery)} style={{ padding: '9px 18px', borderRadius: 99, background: 'transparent', border: `1px solid ${T.line}`, color: T.sub, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, transition: 'all 0.18s' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = T.gRing; e.currentTarget.style.color = T.green; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = T.line; e.currentTarget.style.color = T.sub; }}
+            >🎥 Search YouTube for this Topic</button>
+          </div>
         </div>
+      </div>
     );
+  };
+
+  return (
+    <div style={{ height: 'calc(100vh - 180px)', display: 'flex', flexDirection: 'column', fontFamily: "'DM Sans', sans-serif", animation: 'sp-fadein 0.3s ease both' }}>
+      {/* Header */}
+      <div style={{ marginBottom: 16, flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+          <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.green, boxShadow: `0 0 0 3px ${T.gRing}` }} />
+          <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 11, color: T.green, letterSpacing: '0.9px', textTransform: 'uppercase' }}>AI Coach</span>
+        </div>
+        <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', color: T.ink, marginBottom: 4 }}>🤖 AI Improvement Coach</h1>
+        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, color: T.sub }}>Chat with me to fix your knowledge gaps</p>
+      </div>
+
+      {/* Chat window */}
+      <div ref={scrollRef} style={{
+        flex: 1, background: T.zoneBg, borderRadius: 16,
+        border: `1px solid ${T.line}`, overflowY: 'auto',
+        padding: '20px 18px', display: 'flex', flexDirection: 'column', gap: 16,
+        boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)',
+      }}>
+        {/* Growth areas memory card */}
+        {Object.keys(profile.weakTopics).length > 0 && messages.length <= 2 && (
+          <div style={{ background: T.cardBg, padding: '16px 18px', borderRadius: 14, border: `1px solid ${T.line}`, boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: T.gLight, border: `1px solid ${T.gRing}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>📈</div>
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.ink }}>Your Personal Growth Areas</span>
+            </div>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: T.sub, marginBottom: 12 }}>I've remembered these topics from your previous tests. Which one should we master today?</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8 }}>
+              {Object.values(profile.weakTopics).map((t, i) => (
+                <button key={i} onClick={() => handleTopicSelect(t.name, t.mistakeType, t.feedback)} style={{
+                  padding: '10px 12px', borderRadius: 12, border: `1px solid ${T.line}`,
+                  background: T.zoneBg, textAlign: 'left', cursor: 'pointer', transition: 'all 0.18s',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.gRing; e.currentTarget.style.background = T.gLight; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = T.line; e.currentTarget.style.background = T.zoneBg; }}
+                >
+                  <div>
+                    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.ink }}>{t.name}</div>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: T.hint }}>{t.subject}</div>
+                  </div>
+                  <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 10, padding: '2px 8px', borderRadius: 99, background: t.status === 'Resolved' ? T.gLight : '#EFF6FF', color: t.status === 'Resolved' ? T.green : '#1D4ED8', border: `1px solid ${t.status === 'Resolved' ? T.gRing : '#BFDBFE'}` }}>
+                    {t.status}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map(msg => (
+          <div key={msg.id} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start', alignItems: 'flex-end', gap: 8 }}>
+            {msg.role === 'bot' && (
+              <div style={{ width: 30, height: 30, borderRadius: '50%', background: T.gLight, border: `1px solid ${T.gRing}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>🤖</div>
+            )}
+            {msg.type === 'text' && renderText(msg)}
+            {msg.type === 'options' && renderOptions(msg)}
+            {msg.type === 'explanation' && renderExplanation(msg)}
+          </div>
+        ))}
+
+        {isTyping && (
+          <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: T.gLight, border: `1px solid ${T.gRing}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>🤖</div>
+            <div style={{ padding: '12px 16px', borderRadius: '18px 18px 18px 4px', background: T.cardBg, border: `1px solid ${T.line}`, display: 'flex', gap: 4, alignItems: 'center' }}>
+              {[0, 0.2, 0.4].map((delay, i) => (
+                <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: T.gMid, animation: `sp-bounce 1.2s ease-in-out ${delay}s infinite` }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <form onSubmit={handleSendMessage} style={{
+        marginTop: 14, display: 'flex', gap: 10, padding: '10px 12px',
+        background: T.cardBg, borderRadius: 99, border: `1px solid ${T.line}`,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)', flexShrink: 0,
+      }}>
+        <input type="text" value={inputValue} onChange={e => setInputValue(e.target.value)}
+          placeholder={activeTopic ? `Ask about ${activeTopic}…` : 'Ask your AI Coach a question…'}
+          style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '4px 10px', fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.ink }}
+        />
+        <button type="submit" disabled={!inputValue.trim() || isTyping} style={{
+          width: 38, height: 38, borderRadius: '50%', border: 'none',
+          background: inputValue.trim() && !isTyping ? 'linear-gradient(135deg, #F59E0B, #D97706)' : T.line,
+          color: 'white', cursor: inputValue.trim() && !isTyping ? 'pointer' : 'default',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          transition: 'all 0.18s', fontSize: 16, flexShrink: 0,
+          boxShadow: inputValue.trim() && !isTyping ? `0 3px 10px ${T.gGlow}` : 'none',
+        }}>↑</button>
+      </form>
+    </div>
+  );
 }
