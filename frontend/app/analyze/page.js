@@ -8,167 +8,141 @@ import RecentSubmissions from '@/components/RecentSubmissions';
 import RemediationAgent from '@/components/RemediationAgent';
 import Flashcards from '@/components/Flashcards';
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
+// ─── Design tokens (Vercel black & white) ─────────────────────────────────────
 const T = {
-  pageBg:   'var(--page)',
-  cardBg:   'var(--card)',
-  zoneBg:   'var(--zone)',
-  navBg:    'var(--nav)',
-  green:    'var(--g)',
-  gMid:     'var(--gMid)',
-  gLight:   'var(--gLight)',
-  gRing:    'var(--gRing)',
-  gGlow:    'var(--gGlow)',
-  ink:      'var(--ink)',
-  sub:      'var(--sub)',
-  hint:     'var(--hint)',
-  line:     'var(--line)',
-  lineHi:   'var(--lineHi)',
-  amber:    'var(--amber)',
-  amberBg:  'var(--amberBg)',
-  amberLine:'var(--amberLine)',
+  bg: '#ffffff',
+  fg: '#000000',
+  border: '#eaeaea',
+  gray: '#666666',
+  lightGray: '#fafafa',
+  success: '#0070f3',
+  error: '#ff0000',
 };
 
-// ─── Global CSS (injected once) ───────────────────────────────────────────────
+// ─── Global CSS ────────────────────────────────────────────────────────────────
 const GLOBAL_CSS = `
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--page); color: var(--ink); }
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { 
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: ${T.lightGray};
+    color: ${T.fg};
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--lineHi); border-radius: 99px; }
-  .sp-tab:hover { background: var(--line) !important; color: var(--ink) !important; }
-  .sp-zone:hover { border-color: var(--gMid) !important; background: var(--gLight) !important; }
-  .sp-zone:hover .sp-zico { background: var(--gRing) !important; }
-  .sp-cta:not(:disabled):not(.sp-cta-done):hover { background: linear-gradient(135deg, #D97706, #B45309) !important; box-shadow: 0 8px 28px var(--gGlow), 0 1px 0 rgba(255,255,255,0.12) inset !important; transform: translateY(-1px) !important; }
-  .sp-sel:focus { border-color: var(--gMid) !important; box-shadow: 0 0 0 3px var(--gLight) !important; outline: none; }
-  .sp-feat:hover { background: var(--gLight) !important; }
-  @keyframes sp-bounce {
-    0%,80%,100% { transform: translateY(0); opacity: 0.75; }
-    40% { transform: translateY(-6px); opacity: 1; }
+  ::-webkit-scrollbar-thumb { background: ${T.border}; border-radius: 4px; }
+  
+  button { font-family: 'Inter', sans-serif; }
+  
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  @keyframes sp-fadein {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes sp-shimmer {
-    0%   { background-position: -200% center; }
-    100% { background-position:  200% center; }
-  }
-  .sp-fadein { animation: sp-fadein 0.3s ease both; }
-  .sp-pbar {
-    background: linear-gradient(90deg, var(--gMid), var(--gRing), var(--gMid));
-    background-size: 200% 100%;
-    animation: sp-shimmer 1.6s linear infinite;
-  }
-  @media (max-width: 768px) {
-    .sp-layout { flex-direction: column !important; }
-    .sp-sidebar { width: 100% !important; }
-    .sp-nav-inner { padding: 0 16px !important; }
-    .sp-main-pad { padding: 16px !important; }
-  }
-  @media (max-width: 600px) {
-    .sp-zones { grid-template-columns: 1fr !important; }
-  }
+  
+  .fadein { animation: fadein 0.2s ease; }
 `;
 
-// ─── SVG icons ────────────────────────────────────────────────────────────────
+// ─── Icons ─────────────────────────────────────────────────────────────────────
 const LeafIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <path d="M12 22C12 22 4 16 4 9a8 8 0 0 1 16 0c0 7-8 13-8 13z" fill="white" opacity="0.9"/>
     <path d="M12 22V9" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
   </svg>
 );
+
 const BellIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.sub} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </svg>
 );
+
 const ChevronIcon = ({ open }) => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
     <path d={open ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"}/>
   </svg>
 );
+
 const ShieldIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
   </svg>
 );
+
 const ClockIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 6v6l4 2"/>
   </svg>
 );
+
 const FileIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
   </svg>
 );
-const StarIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.gMid} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-  </svg>
-);
+
 const PencilIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
   </svg>
 );
-const UploadArrowIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M3 15v2a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4v-2"/>
+
+const WarnIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.error} strokeWidth="2" strokeLinecap="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+    <line x1="12" y1="9" x2="12" y2="13"/>
+    <line x1="12" y1="17" x2="12.01" y2="17"/>
   </svg>
 );
+
 const CheckIcon = ({ size = 16, color = 'white' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round">
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
+
 const XIcon = () => (
-  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.sub} strokeWidth="2.5" strokeLinecap="round">
-    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-);
-const WarnIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={T.amber} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2.5" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 );
 
-// ─── Upload Zone sub-component ────────────────────────────────────────────────
+// ─── Upload Zone ───────────────────────────────────────────────────────────────
 function UploadZone({ step, title, file, onFile, onClear, isDragging, onDragOver, onDragLeave, onDrop }) {
+  const inputRef = useRef(null);
   const hasFile = !!file;
   const ext = hasFile ? file.name.split('.').pop().toUpperCase() : null;
-  const shortName = hasFile ? (file.name.length > 22 ? file.name.slice(0, 20) + '…' : file.name) : null;
-  const sizeMB = hasFile ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : null;
-  const inputRef = useRef(null);
-
-  const gridBg = !hasFile
-    ? `repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(233,231,225,0.5) 27px,rgba(233,231,225,0.5) 28px),repeating-linear-gradient(90deg,transparent,transparent 27px,rgba(233,231,225,0.5) 27px,rgba(233,231,225,0.5) 28px)`
-    : 'none';
+  const name = hasFile ? (file.name.length > 24 ? file.name.slice(0, 22) + '…' : file.name) : null;
+  const size = hasFile ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : null;
 
   return (
     <div
-      className="sp-zone"
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       onClick={() => !hasFile && inputRef.current?.click()}
       style={{
         position: 'relative',
-        borderRadius: 16,
-        border: `1.5px dashed ${isDragging || hasFile ? T.gMid : T.lineHi}`,
-        minHeight: 148,
-        background: isDragging ? '#EFF8F3' : hasFile ? T.gLight : T.zoneBg,
-        backgroundImage: !hasFile ? gridBg : 'none',
+        border: `1px ${isDragging ? 'solid' : 'dashed'} ${isDragging ? T.fg : T.border}`,
+        borderRadius: 8,
+        minHeight: 140,
+        background: hasFile ? T.lightGray : T.bg,
         cursor: hasFile ? 'default' : 'pointer',
-        transform: isDragging ? 'scale(1.013)' : 'scale(1)',
-        transition: 'all 0.2s ease',
-        padding: '20px 16px 18px',
+        transition: 'all 0.2s',
+        padding: 20,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
+        gap: 12,
       }}
     >
       <input
@@ -179,73 +153,72 @@ function UploadZone({ step, title, file, onFile, onClear, isDragging, onDragOver
         onChange={e => { if (e.target.files[0]) onFile(e.target.files[0]); }}
       />
 
-      {/* Step badge */}
       <div style={{
-        position: 'absolute', top: 10, left: 10,
-        width: 22, height: 22, borderRadius: '50%',
-        background: hasFile ? T.green : T.lineHi,
-        color: hasFile ? 'white' : T.hint,
+        position: 'absolute', top: 12, left: 12,
+        width: 20, height: 20, borderRadius: 4,
+        background: hasFile ? T.fg : T.bg,
+        color: hasFile ? T.bg : T.gray,
+        border: `1px solid ${hasFile ? T.fg : T.border}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 10, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700,
+        fontSize: 11, fontWeight: 600,
       }}>
-        {hasFile ? <CheckIcon size={11} /> : step}
+        {hasFile ? <CheckIcon size={10} color={T.bg} /> : step}
       </div>
 
-      {/* Clear button */}
       {hasFile && (
         <button
           onClick={e => { e.stopPropagation(); onClear(); }}
           style={{
-            position: 'absolute', top: 10, right: 10,
-            width: 22, height: 22, borderRadius: '50%',
-            background: T.line, border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'absolute', top: 12, right: 12,
+            width: 20, height: 20, borderRadius: 4,
+            background: T.bg, border: `1px solid ${T.border}`,
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
           <XIcon />
         </button>
       )}
 
-      {/* Icon box */}
-      <div
-        className="sp-zico"
-        style={{
-          width: 44, height: 44, borderRadius: 10,
-          background: hasFile ? '#BFDBFE' : T.line,
-          border: `1px solid ${hasFile ? T.gRing : T.lineHi}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          transition: 'all 0.2s', marginBottom: 10,
-        }}
-      >
-        {hasFile ? <CheckIcon size={20} color={T.green} /> : <UploadArrowIcon />}
+      <div style={{
+        width: 40, height: 40, borderRadius: 8,
+        background: hasFile ? T.fg : T.lightGray,
+        border: `1px solid ${hasFile ? T.fg : T.border}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        {hasFile ? (
+          <CheckIcon size={18} color={T.bg} />
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={T.gray} strokeWidth="2" strokeLinecap="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        )}
       </div>
 
-      {/* Title */}
-      <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.ink, textAlign: 'center' }}>
-        {title}
-      </div>
+      <div style={{ fontSize: 13, fontWeight: 500, color: T.fg }}>{title}</div>
 
-      {/* File info or hint */}
       {hasFile ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            background: T.cardBg, border: `1px solid ${T.gRing}`,
-            borderRadius: 8, padding: '4px 8px',
+            background: T.bg, border: `1px solid ${T.border}`,
+            borderRadius: 6, padding: '4px 10px',
           }}>
             <span style={{
-              background: T.green, color: 'white', borderRadius: 4,
-              fontSize: 9, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700,
-              padding: '1px 5px',
+              background: T.fg, color: T.bg, borderRadius: 3,
+              fontSize: 9, fontWeight: 600, padding: '2px 5px',
             }}>{ext}</span>
-            <span style={{ fontSize: 12, color: T.ink }}>{shortName}</span>
+            <span style={{ fontSize: 12, color: T.fg }}>{name}</span>
           </div>
-          <span style={{ fontSize: 11, color: T.hint }}>{sizeMB}</span>
+          <span style={{ fontSize: 11, color: T.gray }}>{size}</span>
         </div>
       ) : (
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 12, color: T.hint }}>Click or drag &amp; drop</div>
-          <div style={{ fontSize: 11, color: T.hint, marginTop: 2 }}>PDF · JPG · PNG</div>
+          <div style={{ fontSize: 12, color: T.gray }}>
+            {isDragging ? 'Drop here' : 'Click or drag file'}
+          </div>
+          <div style={{ fontSize: 11, color: T.gray, marginTop: 4 }}>PDF, JPG, PNG</div>
         </div>
       )}
     </div>
@@ -472,81 +445,37 @@ function AnalyzePage({
 
   return (
     <>
-    <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }} className="sp-layout">
-      {/* ── Main card ── */}
-      <div style={{ flex: 1, minWidth: 0, maxWidth: 680 }}>
-        {/* Page header */}
-        <div style={{ marginBottom: 22 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <div style={{ width: 7, height: 7, borderRadius: '50%', background: T.green, boxShadow: `0 0 0 3px ${T.gRing}` }} />
-            <span style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 11,
-              color: T.green, letterSpacing: '0.9px', textTransform: 'uppercase',
-            }}>Answer Sheet Analyser</span>
-          </div>
-          <h1 style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800,
-            fontSize: 'clamp(2rem, 4vw, 2.75rem)', lineHeight: 1.15,
-            color: T.ink, marginBottom: 6,
-          }}>
-            <span style={{ color: T.ink, fontWeight: 800 }}>Ready to </span>
-            <em style={{
-              color: T.green, fontStyle: 'italic', fontWeight: 800,
-              textDecoration: 'underline', textDecorationColor: T.gRing, textUnderlineOffset: '4px',
-              textShadow: '0 2px 12px rgba(37,99,235,0.15)',
-            }}>Improve?</em>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 20px' }}>
+      <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+        {/* Main */}
+        <div style={{ flex: 1 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 600, color: T.fg, marginBottom: 8 }}>
+            Analyze Answer Sheet
           </h1>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14.5, color: T.sub, maxWidth: 520, marginTop: 6 }}>
-            Upload the answer sheet for {studentClass} and get instant AI-powered feedback.
+          <p style={{ fontSize: 14, color: T.gray, marginBottom: 32 }}>
+            Upload your answer sheet for {studentClass}
           </p>
-        </div>
 
-        {/* Main card */}
-        <div style={{
-          background: T.cardBg, border: `1px solid ${T.line}`, borderRadius: 20,
-          overflow: 'hidden',
-          boxShadow: '0 0 0 1px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.07)',
-        }}>
-          {/* Top accent stripe */}
-          <div style={{ height: 3, background: `linear-gradient(90deg, ${T.green}, #FCD34D, transparent)` }} />
-
-          <div style={{ padding: 28 }}>
-            {/* Subject select */}
+          <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: 24 }}>
+            {/* Subject */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                <PencilIcon />
-                <span style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 11,
-                  color: T.hint, textTransform: 'uppercase', letterSpacing: '0.7px',
-                }}>Subject</span>
-                <span style={{
-                  background: T.line, color: T.hint, borderRadius: 99,
-                  fontSize: 10, padding: '1px 7px',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>optional</span>
-              </div>
-              <div style={{ position: 'relative' }}>
-                <select
-                  className="sp-sel"
-                  value={selectedSubject}
-                  onChange={e => setSelectedSubject(e.target.value)}
-                  style={{
-                    width: '100%', padding: '11px 42px 11px 14px',
-                    border: `1.5px solid ${T.line}`, borderRadius: 12,
-                    background: T.cardBg, appearance: 'none',
-                    fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14.5,
-                    color: T.ink, cursor: 'pointer', transition: 'border-color 0.2s',
-                    WebkitAppearance: 'none', MozAppearance: 'none',
-                  }}
-                >
-                  {syllabusTopics && Object.keys(syllabusTopics).map((s, i) => (
-                    <option key={i} value={s} style={{ background: '#FFFFFF', color: T.ink }}>{s}</option>
-                  ))}
-                </select>
-                <div style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={T.hint} strokeWidth="2.5" strokeLinecap="round"><path d="M6 9l6 6 6-6"/></svg>
-                </div>
-              </div>
+              <label style={{ fontSize: 13, fontWeight: 500, color: T.fg, display: 'block', marginBottom: 8 }}>
+                Subject
+              </label>
+              <select
+                value={selectedSubject}
+                onChange={e => setSelectedSubject(e.target.value)}
+                style={{
+                  width: '100%', padding: '10px 12px',
+                  border: `1px solid ${T.border}`, borderRadius: 6,
+                  background: T.bg, fontSize: 14, color: T.fg,
+                  cursor: 'pointer',
+                }}
+              >
+                {syllabusTopics && Object.keys(syllabusTopics).map((s, i) => (
+                  <option key={i} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
 
             {/* Upload zones */}
@@ -680,7 +609,7 @@ function AnalyzePage({
       </div>
 
       {/* ── Right sidebar ── */}
-      <div style={{ width: 260, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 14, paddingBottom: 28 }}>
+      <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
 
         {/* CARD 2 — Study Reminders */}
         <div style={{ background: T.cardBg, border: `1px solid ${T.line}`, borderRadius: 16, overflow: 'hidden' }}>
@@ -840,7 +769,6 @@ function AnalyzePage({
 
 
       </div>
-
     </div>
 
     {/* Confirmation Modal */}

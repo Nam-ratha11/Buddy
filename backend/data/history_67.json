@@ -1,0 +1,231 @@
+[
+  {
+    "timestamp": 1774585435917,
+    "data": {
+      "overallScore": 38,
+      "totalMarks": 40,
+      "questions": [
+        {
+          "id": "1",
+          "topic": "Nutrition in Plants",
+          "question": "What is the ultimate source of energy for all living organisms?",
+          "studentAnswer": "Solar energy",
+          "correctAnswer": "Solar energy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "2",
+          "topic": "Nutrition in Plants",
+          "question": "Green colour of the plant is due to the presence of ______.",
+          "studentAnswer": "chlorophyll",
+          "correctAnswer": "Chlorophyll",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "3",
+          "topic": "Nutrition in Plants",
+          "question": "Which of the following Organism is not an Autotrophs?",
+          "studentAnswer": "pitcher plant",
+          "correctAnswer": "Fungus",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Fungus is a saprotroph (heterotroph). Pitcher plants are partially autotrophic as they can photosynthesize.",
+          "mistakeType": "Conceptual Error",
+          "proof": {
+            "source": "NCERT_7_Science_Ch1_Nutrition_in_Plants",
+            "page": 5,
+            "text": "Other Modes of Nutrition in Plants: There are some plants which do not have chlorophyll. They cannot prepare food. Like humans and animals such plants depend on the food produced by other plants. They use the heterotrophic mode of nutrition. Example: Cuscuta (Amarbel) is a parasite."
+          }
+        },
+        {
+          "id": "4",
+          "topic": "Nutrition in Animals",
+          "question": "Pseudopodia help in the ingestion of food in _____.",
+          "studentAnswer": "Amoeba",
+          "correctAnswer": "Amoeba",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "5",
+          "topic": "Nutrition in Animals",
+          "question": "The complete digestion & absorption of food occurs in _____.",
+          "studentAnswer": "Small intestine",
+          "correctAnswer": "Small intestine",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "6",
+          "topic": "Nutrition in Animals",
+          "question": "The largest gland in human body is _____.",
+          "studentAnswer": "Liver",
+          "correctAnswer": "Liver",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "7",
+          "topic": "Heat",
+          "question": "No medium is required for the transfer of heat by the process of _____.",
+          "studentAnswer": "Radiation",
+          "correctAnswer": "Radiation",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "8",
+          "topic": "Heat",
+          "question": "______ type of clothes do we prefer to wear in summer.",
+          "studentAnswer": "Light - coloured",
+          "correctAnswer": "Light-coloured",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "9",
+          "topic": "Nutrition in Animals",
+          "question": "Assertion (A): There are four types of teeth present in mouth. Reason (R): Incisor is a type of teeth which involved in the process of grinding the food.",
+          "studentAnswer": "A is true but R is false",
+          "correctAnswer": "A is true but R is false",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Incisors are for biting and cutting.",
+          "mistakeType": null
+        },
+        {
+          "id": "10",
+          "topic": "Heat",
+          "question": "Assertion (A): Food can be cooked faster in copper bottom vessels. Reason(R): Copper is the best conductor of heat.",
+          "studentAnswer": "Both A and R are True... and R is the correct explainition of A.",
+          "correctAnswer": "Both A and R are true, and R is the correct explanation of A",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct.",
+          "mistakeType": null
+        },
+        {
+          "id": "11",
+          "topic": "Nutrition in Plants",
+          "question": "Write the differences between autotrophic nutrition & heterotrophic nutrition.",
+          "studentAnswer": "Autotrophic: plants prepare own food using simple substances. Heterotrophic: organisms that cannot make their own food (e.g., humans, animals).",
+          "correctAnswer": "Autotrophs produce their own food from inorganic substances; Heterotrophs obtain energy from organic substances/other organisms.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Well-defined with examples.",
+          "mistakeType": null
+        },
+        {
+          "id": "12",
+          "topic": "Heat",
+          "question": "Define conductors & give example.",
+          "studentAnswer": "Material which allows the heat to pass through are called Good conductors. Ex: Aluminium, copper.",
+          "correctAnswer": "Materials that allow heat to flow through them easily. Examples: copper, silver, iron.",
+          "marksObtained": 1,
+          "maxMarks": 2,
+          "feedback": "Definition and examples are correct, but the initial attempt on page 2 was confused. Overall mark awarded is for the correct definition found later.",
+          "mistakeType": "Partial Content",
+          "proof": {
+            "source": "NCERT_7_Science_Ch4_World_of_Metals_NonMetals",
+            "page": 4,
+            "text": "Conduction of Heat: Metals are good conductors of heat, whereas wood is a poor conductor of heat. The transfer of heat from one point to another of a material is called conduction. Metal vessels are used for cooking, and their handles are made with wood or other materials that do not conduct heat."
+          }
+        },
+        {
+          "id": "13",
+          "topic": "Nutrition in Plants",
+          "question": "Define insectivorous plants. Give 2 examples?",
+          "studentAnswer": "Ex: pitcher plant and venus fly trap. These plants trap and digest insects. They usually grow in poor soil.",
+          "correctAnswer": "Plants that derive some or most of their nutrients from trapping and consuming animals or protozoans, typically insects. E.g., Pitcher plant, Venus flytrap.",
+          "marksObtained": 2,
+          "maxMarks": 2,
+          "feedback": "Good answer including the reason (poor soil/nitrogen deficiency).",
+          "mistakeType": null
+        },
+        {
+          "id": "14",
+          "topic": "Heat",
+          "question": "Explain about clinical thermometer & laboratory thermometer.",
+          "studentAnswer": "Clinical: measure human body temp, range 35-42C, has kink. Lab: measure hotness of object, range -10 to 110C, has no kink.",
+          "correctAnswer": "Clinical: range 35°C to 42°C, has a kink, used for body temperature. Lab: range -10°C to 110°C, no kink, used in laboratory experiments.",
+          "marksObtained": 3,
+          "maxMarks": 3,
+          "feedback": "Accurately distinguished between the two types.",
+          "mistakeType": null
+        },
+        {
+          "id": "15",
+          "topic": "Nutrition in Animals",
+          "question": "Mention the types of teeth with their function?",
+          "studentAnswer": "Molars (chewing & grinding), premolars (chewing & grinding), Canines (piercing & tearing), Incisors (cutting & biting).",
+          "correctAnswer": "Incisors (cutting), Canines (tearing), Premolars (grinding), Molars (grinding/crushing).",
+          "marksObtained": 3,
+          "maxMarks": 3,
+          "feedback": "Thorough explanation of types and functions.",
+          "mistakeType": null
+        },
+        {
+          "id": "16",
+          "topic": "Nutrition in Animals",
+          "question": "Explain about feeding & Digestion in Amoeba.",
+          "studentAnswer": "Microscopic organism, uses pseudopodia for food, digestion in food vacuoles.",
+          "correctAnswer": "Amoeba captures food using pseudopodia, forming a food vacuole where digestive juices break down the food.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Correct explanation of the process.",
+          "mistakeType": null
+        },
+        {
+          "id": "17",
+          "topic": "Nutrition in Animals",
+          "question": "Draw a neat labelled diagram of human digestive system?",
+          "studentAnswer": "Diagram with labels: buccal cavity, salivary, oesophagus, liver, pancreas, stomach, large intestine, small intestine, rectum, anus.",
+          "correctAnswer": "A complete diagram including the alimentary canal and associated glands.",
+          "marksObtained": 5,
+          "maxMarks": 5,
+          "feedback": "Very neat and well-labeled diagram.",
+          "mistakeType": null
+        },
+        {
+          "id": "18",
+          "topic": "Nutrition in Animals",
+          "question": "Case study (Stomach): (i) Widest part? (ii) Substances released from inner lining? (iii) Function of acid?",
+          "studentAnswer": "(i) stomach (ii) mucus, HCl, digestive juices (iii) kills many bacteria, makes medium acidic, helps juices to act.",
+          "correctAnswer": "(i) Stomach (ii) Mucous, hydrochloric acid, and digestive juices (iii) Kills bacteria and creates acidic environment for digestion.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Full marks for comprehensive answers based on the text.",
+          "mistakeType": null
+        },
+        {
+          "id": "19",
+          "topic": "Nutrition in Plants",
+          "question": "Case study: (i) Define Nutrition? (ii) Mention components in food? (iii) Name raw materials in photosynthesis?",
+          "studentAnswer": "(i) Mode of taking food by organism... (ii) Carbohydrates, proteins, fats, vitamins, minerals (iii) water, carbon dioxide, minerals.",
+          "correctAnswer": "(i) Mode of taking food and its utilization. (ii) Carbohydrates, proteins, fats, vitamins, minerals. (iii) Water, carbon dioxide, and minerals.",
+          "marksObtained": 4,
+          "maxMarks": 4,
+          "feedback": "Accurate extraction from the case study passage.",
+          "mistakeType": null
+        }
+      ],
+      "studentClass": "7th CBSE"
+    }
+  }
+]
