@@ -118,6 +118,7 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
   const [activeTopic, setActiveTopic] = useState(null);
   const [profile, setProfile] = useState({ weakTopics: {} });
   const [mcqAnswers, setMcqAnswers] = useState({});
+  const [isPlaying, setIsPlaying] = useState(null);
   const scrollRef = useRef(null);
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
 
@@ -146,6 +147,54 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, isTyping]);
+
+  const speakText = (text, id) => {
+    if (typeof window === 'undefined') return;
+    window.speechSynthesis.cancel();
+    if (isPlaying === id) {
+      setIsPlaying(null);
+      return;
+    }
+
+    const cleanText = text.replace(/[*#`_]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.onend = () => setIsPlaying(null);
+    utterance.onerror = () => setIsPlaying(null);
+    
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha') || v.lang === 'en-US');
+    if (preferredVoice) utterance.voice = preferredVoice;
+    
+    utterance.pitch = 1.0;
+    utterance.rate = 1.05;
+    
+    setIsPlaying(id);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const SpeakButton = ({ text, id }) => (
+    <button 
+      onClick={(e) => { e.stopPropagation(); speakText(text, id); }}
+      style={{
+        background: isPlaying === id ? T.green : T.gLight,
+        color: isPlaying === id ? 'white' : T.green,
+        border: `1px solid ${T.gRing}`,
+        borderRadius: '50%',
+        width: 32,
+        height: 32,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: 14,
+        boxShadow: isPlaying === id ? `0 2px 8px ${T.gGlow}` : 'none',
+        transition: 'all 0.2s',
+      }}
+      title={isPlaying === id ? "Stop Speaking" : "Listen to Explanation"}
+    >
+      {isPlaying === id ? '⏹' : '🔊'}
+    </button>
+  );
 
   let allQuestions = [];
   if (evaluation && evaluation.questions) allQuestions = evaluation.questions;
@@ -286,7 +335,15 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
       border: msg.role === 'bot' ? `1px solid ${T.line}` : 'none',
       boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
       fontFamily: "'DM Sans', sans-serif",
-    }}>{msg.content}</div>
+      position: 'relative'
+    }}>
+      {msg.content}
+      {msg.role === 'bot' && (
+        <div style={{ position: 'absolute', right: -40, bottom: 0 }}>
+          <SpeakButton text={msg.content} id={msg.id} />
+        </div>
+      )}
+    </div>
   );
 
   const renderOptions = (msg) => (
@@ -389,11 +446,12 @@ export default function RemediationAgent({ evaluation, history = [], studentClas
           )}
 
 
-          <div style={{ textAlign: 'center' }}>
-            <button onClick={() => handleWatchVideo(d.topic, d.youtubeSearchQuery)} style={{ padding: '9px 18px', borderRadius: 99, background: 'transparent', border: `1px solid ${T.line}`, color: T.sub, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, transition: 'all 0.18s' }}
+          <div style={{ textAlign: 'center', display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <button onClick={() => handleWatchVideo(d.topic, d.youtubeSearchQuery)} style={{ padding: '9px 18px', borderRadius: 99, background: 'transparent', border: `1px solid ${T.line}`, color: T.sub, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, transition: 'all 0.18s', display: 'flex', alignItems: 'center', gap: 6 }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = T.gRing; e.currentTarget.style.color = T.green; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = T.line; e.currentTarget.style.color = T.sub; }}
-            >🎥 Search YouTube for this Topic</button>
+            >🎥 Watch Video</button>
+            <SpeakButton text={d.chapterExplanation?.overview || d.topic} id={msg.id} />
           </div>
         </div>
       </div>
