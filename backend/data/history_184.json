@@ -1,0 +1,72 @@
+[
+  {
+    "timestamp": 1774588968218,
+    "data": {
+      "overallScore": 4,
+      "totalMarks": 5,
+      "questions": [
+        {
+          "id": 1,
+          "topic": "Components of Food",
+          "question": "Which of the following is a body-building food?",
+          "studentAnswer": "c. Pulses",
+          "correctAnswer": "c) Pulses",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Pulses are rich in proteins, which are known as body-building foods.",
+          "mistakeType": null
+        },
+        {
+          "id": 2,
+          "topic": "Sorting Materials into Groups",
+          "question": "Which of the following materials is transparent?",
+          "studentAnswer": "d. Metal sheet",
+          "correctAnswer": "b) Glass",
+          "marksObtained": 0,
+          "maxMarks": 1,
+          "feedback": "Incorrect. A metal sheet is opaque. Glass is a transparent material as it allows light to pass through it.",
+          "mistakeType": "Conceptual Error",
+          "proof": {
+            "source": "gecu111.pdf",
+            "page": 5,
+            "text": "Light: Shadows and Reflections 157 Fig. 11.6: Passing light through different materials  List the materials of the objects in Table 11.1 and classify them into transparent, translucent, and opaque (In the chapter ‘Materials Around Us’ in the Grade 6 Science textbook Curiosity you learnt to classify materials into transparent, translucent, and opaque, depending on how you could see through them).  Go to a dark room, turn on the torch, and place it at such a position that you get a spot of light from the torch on a wall. Or you may place a cardboard screen as shown in Fig. 11.6 and get the spot of light on it.  We will now conduct this activity in two parts — prediction and observation.  Predict what will happen if you hold an object in front of the light coming out of the torch. Would you continue to see the spot of light on the screen? Note your prediction in Table 11.1.  Now, actua"
+          }
+        },
+        {
+          "id": 3,
+          "topic": "Separation of Substances",
+          "question": "The method used to separate tea leaves from prepared tea is called:",
+          "studentAnswer": "b. Filtration",
+          "correctAnswer": "b) Filtration",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Filtration is the process used to separate solid particles from a liquid.",
+          "mistakeType": null
+        },
+        {
+          "id": 4,
+          "topic": "Getting to know Plants",
+          "question": "The part of a plant that conducts water from roots to leaves is the:",
+          "studentAnswer": "c. stem.",
+          "correctAnswer": "c) Stem",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. The stem acts as a pipeline for water and minerals.",
+          "mistakeType": null
+        },
+        {
+          "id": 5,
+          "topic": "Components of Food",
+          "question": "Deficiency of Vitamin C causes:",
+          "studentAnswer": "c. Scurvy",
+          "correctAnswer": "c) Scurvy",
+          "marksObtained": 1,
+          "maxMarks": 1,
+          "feedback": "Correct. Scurvy is the deficiency disease caused by lack of Vitamin C.",
+          "mistakeType": null
+        }
+      ],
+      "studentClass": "6th CBSE"
+    }
+  }
+]
