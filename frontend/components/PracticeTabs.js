@@ -6,10 +6,13 @@ import TopicSelector from './TopicSelector';
 import PracticeArea from './PracticeArea';
 
 const T = {
-  pageBg: 'var(--page)', cardBg: 'var(--card)', zoneBg: 'var(--zone)',
-  green: 'var(--g)', gMid: 'var(--gMid)', gLight: 'var(--gLight)', gRing: 'var(--gRing)',
-  gGlow: 'var(--gGlow)', ink: 'var(--ink)', sub: 'var(--sub)',
-  hint: 'var(--hint)', line: 'var(--line)', lineHi: 'var(--lineHi)',
+  bg: '#ffffff',
+  fg: '#000000',
+  border: '#eaeaea',
+  gray: '#666666',
+  lightGray: '#fafafa',
+  success: '#0070f3',
+  error: '#ff0000',
 };
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
@@ -143,7 +146,7 @@ export default function PracticeTabs({ onBack, studentClass, syllabusTopics = {}
         display: 'flex', 
         gap: 8, 
         marginBottom: 24,
-        borderBottom: `2px solid ${T.line}`,
+        borderBottom: `1px solid ${T.border}`,
         paddingBottom: 0
       }}>
         <button
@@ -152,14 +155,14 @@ export default function PracticeTabs({ onBack, studentClass, syllabusTopics = {}
             padding: '12px 24px',
             border: 'none',
             background: 'none',
-            borderBottom: `3px solid ${activeTab === 'quick' ? T.green : 'transparent'}`,
-            color: activeTab === 'quick' ? T.green : T.sub,
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 700,
-            fontSize: 15,
+            borderBottom: `2px solid ${activeTab === 'quick' ? T.fg : 'transparent'}`,
+            color: activeTab === 'quick' ? T.fg : T.gray,
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            fontSize: 14,
             cursor: 'pointer',
             transition: 'all 0.2s',
-            marginBottom: -2
+            marginBottom: -1
           }}
         >
           📚 Quick Practice
@@ -170,14 +173,14 @@ export default function PracticeTabs({ onBack, studentClass, syllabusTopics = {}
             padding: '12px 24px',
             border: 'none',
             background: 'none',
-            borderBottom: `3px solid ${activeTab === 'battle' ? T.green : 'transparent'}`,
-            color: activeTab === 'battle' ? T.green : T.sub,
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 700,
-            fontSize: 15,
+            borderBottom: `2px solid ${activeTab === 'battle' ? T.fg : 'transparent'}`,
+            color: activeTab === 'battle' ? T.fg : T.gray,
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            fontSize: 14,
             cursor: 'pointer',
             transition: 'all 0.2s',
-            marginBottom: -2
+            marginBottom: -1
           }}
         >
           ⚡ Battle Mode
@@ -199,20 +202,20 @@ export default function PracticeTabs({ onBack, studentClass, syllabusTopics = {}
           {isGeneratingQuick && (
             <div style={{ textAlign: 'center', padding: '60px 20px' }}>
               <div style={{ 
-                width: 48, 
-                height: 48, 
-                border: `4px solid ${T.line}`, 
-                borderTopColor: T.green, 
+                width: 40, 
+                height: 40, 
+                border: `3px solid ${T.border}`, 
+                borderTopColor: T.fg, 
                 borderRadius: '50%', 
                 display: 'inline-block', 
                 animation: 'sp-spin 0.8s linear infinite', 
                 marginBottom: 20 
               }} />
               <p style={{ 
-                fontFamily: "'Plus Jakarta Sans', sans-serif", 
-                fontSize: 16, 
-                fontWeight: 600, 
-                color: T.ink 
+                fontFamily: 'Inter', 
+                fontSize: 15, 
+                fontWeight: 500, 
+                color: T.fg 
               }}>
                 Generating practice questions...
               </p>

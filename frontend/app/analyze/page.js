@@ -266,7 +266,70 @@ function AnalyzeProgress({ progress = 0, stepIndex = 0 }) {
   );
 }
 
-// ─── AnalyzePage (the 'analyze' tab content) ──────────────────────────────────
+// ─── Main Home component ──────────────────────────────────────────────────────
+function ConfirmationModal({ confirmModal, onClose, onConfirm, T }) {
+  if (!confirmModal) return null;
+  
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 9999, animation: 'fadein 0.2s ease'
+    }}
+      onClick={onClose}
+    >
+      <div style={{
+        background: T.bg, borderRadius: 12, padding: '24px 28px',
+        maxWidth: 420, width: '90%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        border: `1px solid ${T.border}`
+      }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ fontSize: 32, marginBottom: 12, textAlign: 'center' }}>⏰</div>
+        <h3 style={{
+          fontFamily: 'Inter', fontWeight: 600,
+          fontSize: 18, color: T.fg, marginBottom: 8, textAlign: 'center'
+        }}>
+          {confirmModal.timeLeft} left!
+        </h3>
+        <p style={{
+          fontFamily: 'Inter', fontSize: 14, color: T.gray,
+          lineHeight: 1.6, marginBottom: 24, textAlign: 'center'
+        }}>
+          You still have {confirmModal.timeLeft} left for "{confirmModal.reminder.text.split(' · ')[0]}". Are you sure you're done?
+        </p>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            onClick={onClose}
+            style={{
+              flex: 1, padding: '10px 16px', borderRadius: 8,
+              background: T.lightGray, border: `1px solid ${T.border}`,
+              color: T.fg, fontFamily: 'Inter',
+              fontSize: 13, fontWeight: 500, cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Keep it active
+          </button>
+          <button
+            onClick={onConfirm}
+            style={{
+              flex: 1, padding: '10px 16px', borderRadius: 8,
+              background: T.fg,
+              border: 'none', color: T.bg,
+              fontFamily: 'Inter',
+              fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Mark Done ✓
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AnalyzePage({
   studentClass, syllabusTopics, selectedSubject, setSelectedSubject,
   questionFile, setQuestionFile, answerFile, setAnswerFile,
@@ -278,7 +341,7 @@ function AnalyzePage({
   const [reminderInput, setReminderInput] = useState('');
   const [selectedPreset, setSelectedPreset] = useState('');
   const [reminderFocused, setReminderFocused] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(null); // { reminder, timeLeft }
+  const [confirmModal, setConfirmModal] = useState(null);
 
   // Load reminders from localStorage on mount
   useEffect(() => {
@@ -286,7 +349,6 @@ function AnalyzePage({
       const stored = localStorage.getItem('sprout_reminders');
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Filter out already fired reminders older than 7 days
         const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
         const active = parsed.filter(r => !r.firedAt || r.firedAt > weekAgo);
         setReminders(active);
@@ -296,7 +358,6 @@ function AnalyzePage({
     }
   }, []);
 
-  // Fire a toast notification
   const fireToast = (text) => {
     const id = Date.now();
     setBellReminders(prev => [{ id, text, read: false }, ...prev]);
@@ -312,20 +373,17 @@ function AnalyzePage({
     const label = selectedPreset ? reminderInput.trim() + ' · ' + selectedPreset : reminderInput.trim();
     const now = Date.now();
     
-    // Calculate due date based on preset
     let dueAt = null;
     if (selectedPreset === 'In 1 day') {
-      dueAt = now + (24 * 60 * 60 * 1000); // 1 day
+      dueAt = now + (24 * 60 * 60 * 1000);
     } else if (selectedPreset === 'In 3 days') {
-      dueAt = now + (3 * 24 * 60 * 60 * 1000); // 3 days
+      dueAt = now + (3 * 24 * 60 * 60 * 1000);
     } else if (selectedPreset === 'This weekend') {
-      // Calculate next Saturday
       const date = new Date();
       const dayOfWeek = date.getDay();
       const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
       dueAt = now + (daysUntilSaturday * 24 * 60 * 60 * 1000);
     } else {
-      // For custom reminders without preset, set to 1 hour from now for testing
       dueAt = now + (60 * 60 * 1000);
     }
     
@@ -337,10 +395,8 @@ function AnalyzePage({
       firedAt: null 
     };
     
-    // Update local state
     setReminders(prev => [...prev, newReminder]);
     
-    // Save to localStorage for persistence
     try {
       const existing = JSON.parse(localStorage.getItem('sprout_reminders') || '[]');
       existing.push(newReminder);
@@ -349,7 +405,6 @@ function AnalyzePage({
       console.error('Failed to save reminder:', e);
     }
     
-    // Show immediate confirmation toast
     fireToast(`Reminder set: ${label}`);
     
     setReminderInput('');
@@ -362,7 +417,6 @@ function AnalyzePage({
     );
     setReminders(updated);
     
-    // Update localStorage
     try {
       const existing = JSON.parse(localStorage.getItem('sprout_reminders') || '[]');
       const updatedStorage = existing.map(r => 
@@ -384,10 +438,8 @@ function AnalyzePage({
     const dueTime = reminder.dueAt;
     
     if (now >= dueTime) {
-      // Past due — mark complete directly
       markComplete(reminder.id);
     } else {
-      // Not due yet — calculate time left
       const diff = dueTime - now;
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -396,7 +448,6 @@ function AnalyzePage({
         ? `${hours} hour${hours > 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`
         : `${minutes} minute${minutes !== 1 ? 's' : ''}`;
       
-      // Show confirmation modal
       setConfirmModal({ reminder, timeLeft });
     }
   };
@@ -414,7 +465,6 @@ function AnalyzePage({
     }
   };
 
-  // Simulated progress state (cycles while analyzing)
   const [progress, setProgress] = useState(0);
   const [stepIdx, setStepIdx] = useState(0);
   const progressRef = useRef(null);
@@ -479,7 +529,7 @@ function AnalyzePage({
             </div>
 
             {/* Upload zones */}
-            <div className="sp-zones" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
               <UploadZone
                 step={1} title="Question Paper"
                 file={questionFile} onFile={setQuestionFile} onClear={() => setQuestionFile(null)}
@@ -492,71 +542,37 @@ function AnalyzePage({
               />
             </div>
 
-            {/* Warning strip */}
-            {!answerFile && (
-              <div className="sp-fadein" style={{
-                background: T.amberBg,
-                borderLeft: `3px solid ${T.amberLine}`,
-                borderTop: `1px solid ${T.amberLine}`,
-                borderRight: `1px solid ${T.amberLine}`,
-                borderBottom: `1px solid ${T.amberLine}`,
-                borderRadius: 12, padding: '12px 16px',
-                display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16,
-              }}>
-                <div style={{
-                  width: 26, height: 26, borderRadius: '50%',
-                  background: 'rgba(252,211,77,0.2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <WarnIcon />
-                </div>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, color: T.amber }}>
-                  An answer sheet is required to run the analysis.
-                </span>
-              </div>
-            )}
-
             {/* CTA button */}
             <button
-              className={`sp-cta${done ? ' sp-cta-done' : ''}`}
               onClick={handleAnalyze}
               disabled={isAnalyzing || !answerFile}
               style={{
-                width: '100%', padding: '15px 20px', borderRadius: 12,
-                fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 15,
-                letterSpacing: '-0.2px', cursor: isAnalyzing || !answerFile ? 'not-allowed' : 'pointer',
-                transition: 'all 0.22s cubic-bezier(0.4, 0, 0.2, 1)',
+                width: '100%', padding: '14px 20px', borderRadius: 8,
+                fontFamily: 'Inter', fontWeight: 600, fontSize: 15,
+                cursor: isAnalyzing || !answerFile ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                ...(done ? {
-                  background: T.gLight, color: T.green,
-                  border: `1px solid ${T.gRing}`, fontWeight: 700, boxShadow: 'none',
-                } : isAnalyzing || !answerFile ? {
-                  background: '#EFEFEB', color: '#AAAA9E',
-                  border: '1px solid #E2E0D8', boxShadow: 'none',
-                } : {
-                  background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#FFFFFF',
-                  border: 'none',
-                  boxShadow: '0 4px 16px rgba(37,99,235,0.28), 0 1px 0 rgba(255,255,255,0.12) inset',
-                }),
+                background: isAnalyzing || !answerFile ? T.lightGray : T.fg,
+                color: isAnalyzing || !answerFile ? T.gray : T.bg,
+                border: 'none',
               }}
             >
               {isAnalyzing ? (
                 <>
                   {[0,1,2].map(i => (
                     <span key={i} style={{
-                      width: 7, height: 7, borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.75)',
+                      width: 6, height: 6, borderRadius: '50%',
+                      background: T.gray,
                       display: 'inline-block',
                       animation: `sp-bounce 1.2s ease-in-out ${i * 0.2}s infinite`,
                     }} />
                   ))}
-                  <span>Analysing…</span>
+                  <span>Analyzing…</span>
                 </>
               ) : done ? (
-                <><CheckIcon size={16} /> View Results →</>
+                <><CheckIcon size={16} color={T.bg} /> View Results</>
               ) : (
-                `Analyse ${studentClass}${selectedSubject ? ` — ${selectedSubject}` : ''}`
+                `Analyze ${studentClass}${selectedSubject ? ` — ${selectedSubject}` : ''}`
               )}
             </button>
 
@@ -565,154 +581,120 @@ function AnalyzePage({
 
             {/* Success banner */}
             {done && (
-              <div className="sp-fadein" style={{
-                marginTop: 16, background: T.gLight, border: `1px solid ${T.gRing}`,
-                borderRadius: 12, padding: '14px 16px',
+              <div className="fadein" style={{
+                marginTop: 16, background: T.lightGray, border: `1px solid ${T.border}`,
+                borderRadius: 8, padding: '14px 16px',
                 display: 'flex', alignItems: 'center', gap: 13,
               }}>
                 <div style={{
-                  width: 38, height: 38, borderRadius: '50%', background: T.green, flexShrink: 0,
+                  width: 32, height: 32, borderRadius: '50%', background: T.success, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 4px 12px ${T.gGlow}`,
                 }}>
-                  <CheckIcon size={18} />
+                  <CheckIcon size={16} />
                 </div>
                 <div>
-                  <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 14, color: T.ink }}>
-                    Analysis complete!
+                  <div style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: T.fg }}>
+                    Analysis complete
                   </div>
-                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12.5, color: T.sub, marginTop: 2 }}>
-                    Switch to the Review tab to see your detailed feedback.
+                  <div style={{ fontFamily: 'Inter', fontSize: 13, color: T.gray, marginTop: 2 }}>
+                    Switch to the Review tab to see your detailed feedback
                   </div>
                 </div>
               </div>
             )}
           </div>
-
-          {/* Card footer */}
-          <div style={{
-            background: T.pageBg, borderTop: `1px solid ${T.line}`,
-            padding: '12px 28px', display: 'flex', gap: 20, flexWrap: 'wrap',
-          }}>
-            {[
-              { icon: <ShieldIcon />, text: 'End-to-end encrypted' },
-              { icon: <ClockIcon />,  text: 'Results in ~30 sec' },
-              { icon: <FileIcon />,   text: 'PDF · JPG · PNG' },
-            ].map(({ icon, text }) => (
-              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                {icon}
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11.5, color: T.hint }}>{text}</span>
-              </div>
-            ))}
-          </div>
         </div>
-      </div>
 
-      {/* ── Right sidebar ── */}
-      <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-        {/* CARD 2 — Study Reminders */}
-        <div style={{ background: T.cardBg, border: `1px solid ${T.line}`, borderRadius: 16, overflow: 'hidden' }}>
-          {/* Header */}
-          <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.line}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 28, height: 28, background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EA580C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
+        {/* Right sidebar - Reminders */}
+        <div style={{ width: 320, flexShrink: 0 }}>
+          <div style={{ background: T.bg, border: `1px solid ${T.border}`, borderRadius: 8, padding: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <BellIcon />
+              <span style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: T.fg }}>Study Reminders</span>
             </div>
-            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.ink, flex: 1 }}>Study Reminders</span>
+            
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: T.gray, textTransform: 'uppercase', marginBottom: 8 }}>Quick presets</div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {['In 1 day', 'In 3 days', 'This weekend'].map(label => (
+                  <button key={label} onClick={() => setSelectedPreset(selectedPreset === label ? '' : label)} style={{
+                    padding: '6px 12px', borderRadius: 6, fontSize: 12, fontWeight: 500,
+                    fontFamily: 'Inter', cursor: 'pointer', transition: 'all 0.15s',
+                    border: `1px solid ${selectedPreset === label ? T.fg : T.border}`,
+                    background: selectedPreset === label ? T.fg : T.bg,
+                    color: selectedPreset === label ? T.bg : T.fg,
+                  }}>{label}</button>
+                ))}
+              </div>
+            </div>
+            
+            <div style={{ height: 1, background: T.border, margin: '12px 0' }} />
+            
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: T.gray, textTransform: 'uppercase', marginBottom: 8 }}>Custom reminder</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  type="text"
+                  placeholder="e.g. Review Science Ch.4"
+                  value={reminderInput}
+                  onChange={e => setReminderInput(e.target.value)}
+                  onFocus={() => setReminderFocused(true)}
+                  onBlur={() => setReminderFocused(false)}
+                  onKeyDown={e => e.key === 'Enter' && addReminder()}
+                  style={{
+                    flex: 1, padding: '8px 12px',
+                    border: `1px solid ${reminderFocused ? T.fg : T.border}`,
+                    borderRadius: 6, fontFamily: 'Inter', fontSize: 13,
+                    color: T.fg, background: T.bg, outline: 'none', transition: 'border-color 0.2s',
+                  }}
+                />
+                <button
+                  onClick={addReminder}
+                  disabled={!reminderInput.trim()}
+                  style={{
+                    padding: '8px 14px', border: 'none', borderRadius: 6,
+                    fontSize: 13, fontWeight: 600, fontFamily: 'Inter',
+                    cursor: reminderInput.trim() ? 'pointer' : 'not-allowed',
+                    background: reminderInput.trim() ? T.fg : T.border,
+                    color: reminderInput.trim() ? T.bg : T.gray,
+                    transition: 'all 0.15s',
+                  }}
+                >+</button>
+              </div>
+            </div>
+            
             {reminders.length > 0 && (
-              <span style={{ background: T.gLight, color: T.green, fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 20 }}>
-                {reminders.length} set
-              </span>
-            )}
-          </div>
-          {/* Body */}
-          <div style={{ padding: '14px 18px' }}>
-            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, color: T.hint, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>Quick presets</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {['In 1 day', 'In 3 days', 'This weekend'].map(label => (
-                <button key={label} onClick={() => setSelectedPreset(selectedPreset === label ? '' : label)} style={{
-                  padding: '6px 12px', borderRadius: 99, fontSize: 12, fontWeight: 500,
-                  fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', transition: 'all 0.15s',
-                  border: selectedPreset === label ? `1px solid ${T.gRing}` : `1px solid ${T.line}`,
-                  background: selectedPreset === label ? T.gLight : T.pageBg,
-                  color: selectedPreset === label ? T.green : T.sub,
-                }}>{label}</button>
-              ))}
-            </div>
-            <div style={{ height: 1, background: T.line, margin: '12px 0' }} />
-            <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 11, fontWeight: 600, color: T.hint, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>Custom reminder</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                type="text"
-                placeholder="e.g. Review Science Ch.4"
-                value={reminderInput}
-                onChange={e => setReminderInput(e.target.value)}
-                onFocus={() => setReminderFocused(true)}
-                onBlur={() => setReminderFocused(false)}
-                onKeyDown={e => e.key === 'Enter' && addReminder()}
-                style={{
-                  flex: 1, padding: '9px 12px',
-                  border: `1.5px solid ${reminderFocused ? T.gMid : T.line}`,
-                  borderRadius: 10, fontFamily: "'DM Sans', sans-serif", fontSize: 13,
-                  color: T.ink, background: T.cardBg, outline: 'none', transition: 'border-color 0.2s',
-                }}
-              />
-              <button
-                onClick={addReminder}
-                disabled={!reminderInput.trim()}
-                style={{
-                  padding: '9px 14px', border: 'none', borderRadius: 10,
-                  fontSize: 13, fontWeight: 600, fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  cursor: reminderInput.trim() ? 'pointer' : 'not-allowed',
-                  background: reminderInput.trim() ? T.green : T.line,
-                  color: reminderInput.trim() ? 'white' : T.hint,
-                  transition: 'all 0.15s',
-                }}
-              >+</button>
-            </div>
-            {reminders.length > 0 && (
-              <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {reminders
-                  .sort((a, b) => (a.completed ? 1 : 0) - (b.completed ? 1 : 0)) // Completed items at bottom
+                  .sort((a, b) => (a.completed ? 1 : 0) - (b.completed ? 1 : 0))
                   .map(r => (
                   <div key={r.id} style={{ 
-                    display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', 
-                    background: r.completed ? T.zoneBg : T.gLight, 
-                    borderRadius: 10, 
-                    border: `1px solid ${r.completed ? T.line : T.gRing}`,
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '10px', 
+                    background: r.completed ? T.lightGray : T.bg, 
+                    borderRadius: 6, 
+                    border: `1px solid ${T.border}`,
                     opacity: r.completed ? 0.6 : 1,
-                    transition: 'all 0.2s'
                   }}>
-                    {/* Completion checkbox */}
                     <button
                       onClick={() => !r.completed && handleCompleteClick(r)}
                       disabled={r.completed}
                       style={{ 
                         width: 18, height: 18, borderRadius: '50%', 
-                        background: r.completed ? T.gMid : 'transparent', 
-                        border: `2px solid ${r.completed ? T.gMid : T.gRing}`,
+                        background: r.completed ? T.success : 'transparent', 
+                        border: `2px solid ${r.completed ? T.success : T.border}`,
                         cursor: r.completed ? 'default' : 'pointer', 
                         display: 'flex', alignItems: 'center', justifyContent: 'center', 
                         flexShrink: 0,
-                        transition: 'all 0.2s'
                       }}
                     >
-                      {r.completed && (
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                      )}
+                      {r.completed && <CheckIcon size={10} />}
                     </button>
                     
                     <span style={{ 
-                      fontSize: 12.5, 
-                      color: r.completed ? T.hint : T.ink, 
+                      fontSize: 13, 
+                      color: r.completed ? T.gray : T.fg, 
                       flex: 1, 
-                      fontFamily: "'DM Sans', sans-serif", 
-                      lineHeight: 1.4,
+                      fontFamily: 'Inter',
                       textDecoration: r.completed ? 'line-through' : 'none'
                     }}>
                       {r.text}
@@ -720,24 +702,21 @@ function AnalyzePage({
                     
                     {r.completed && (
                       <span style={{
-                        fontSize: 9,
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontWeight: 700,
-                        color: T.gMid,
-                        background: T.gLight,
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: T.success,
+                        background: T.lightGray,
                         padding: '2px 6px',
-                        borderRadius: 99,
-                        border: `1px solid ${T.gRing}`
+                        borderRadius: 4,
+                        border: `1px solid ${T.border}`
                       }}>Done</span>
                     )}
                     
                     <button
                       onClick={() => handleDeleteReminder(r.id)}
-                      style={{ width: 18, height: 18, borderRadius: '50%', background: T.line, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                      style={{ width: 18, height: 18, borderRadius: '50%', background: T.lightGray, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                     >
-                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={T.sub} strokeWidth="2.5" strokeLinecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
+                      <XIcon />
                     </button>
                   </div>
                 ))}
@@ -745,104 +724,22 @@ function AnalyzePage({
             )}
           </div>
         </div>
-
-        {/* CARD 3 — Tips for best results */}
-        <div style={{ background: T.gLight, border: `1px solid ${T.gRing}`, borderRadius: 16, padding: '16px 18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <span style={{ fontSize: 16 }}>🌿</span>
-            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 13, color: T.green }}>Tips for best results</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {[
-              'Ensure the answer sheet is well-lit and clearly visible',
-              'Upload the question paper for more accurate scoring',
-              'Flatten crumpled sheets before scanning or photographing',
-              'PDF scans give the best recognition accuracy',
-            ].map((tip, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.gMid, marginTop: 5, flexShrink: 0 }} />
-                <span style={{ fontSize: 12.5, color: T.green, lineHeight: 1.55, fontFamily: "'DM Sans', sans-serif" }}>{tip}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
       </div>
     </div>
 
-    {/* Confirmation Modal */}
-    {confirmModal && (
-      <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 9999, animation: 'sp-fadein 0.2s ease'
+    <ConfirmationModal
+      confirmModal={confirmModal}
+      onClose={() => setConfirmModal(null)}
+      onConfirm={() => {
+        markComplete(confirmModal.reminder.id);
+        setConfirmModal(null);
       }}
-        onClick={() => setConfirmModal(null)}
-      >
-        <div style={{
-          background: T.cardBg, borderRadius: 16, padding: '24px 28px',
-          maxWidth: 420, width: '90%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-          border: `1px solid ${T.line}`, animation: 'sp-slideup 0.3s ease'
-        }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div style={{ fontSize: 32, marginBottom: 12, textAlign: 'center' }}>⏰</div>
-          <h3 style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800,
-            fontSize: 18, color: T.ink, marginBottom: 8, textAlign: 'center'
-          }}>
-            {confirmModal.timeLeft} left!
-          </h3>
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: T.sub,
-            lineHeight: 1.6, marginBottom: 24, textAlign: 'center'
-          }}>
-            You still have {confirmModal.timeLeft} left for "{confirmModal.reminder.text.split(' · ')[0]}". Are you sure you're done?
-          </p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button
-              onClick={() => setConfirmModal(null)}
-              style={{
-                flex: 1, padding: '10px 16px', borderRadius: 10,
-                background: T.zoneBg, border: `1px solid ${T.line}`,
-                color: T.ink, fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 13, fontWeight: 600, cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = T.line}
-              onMouseLeave={(e) => e.currentTarget.style.background = T.zoneBg}
-            >
-              Keep it active
-            </button>
-            <button
-              onClick={() => {
-                markComplete(confirmModal.reminder.id);
-                setConfirmModal(null);
-              }}
-              style={{
-                flex: 1, padding: '10px 16px', borderRadius: 10,
-                background: 'linear-gradient(135deg, #10B981, #059669)',
-                border: 'none', color: 'white',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-            >
-              Mark Done ✓
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
+      T={T}
+    />
     </>
   );
 }
 
-// ─── Main Home component ──────────────────────────────────────────────────────
 export default function Home() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
